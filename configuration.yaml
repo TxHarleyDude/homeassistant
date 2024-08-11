@@ -17,6 +17,9 @@ automation manual: !include_dir_merge_list  automations/
 script: !include scripts.yaml
 script mine: !include_dir_merge_named scripts/
 
+frontend:
+  themes: !include_dir_merge_named themes/
+
   # Example configuration.yaml entry
 eufy:
   username: !secret username
