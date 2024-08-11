@@ -1,6 +1,7 @@
 ---
 # This file bootstraps the system
 # Have a look inside the Integrations and Entities folders for my config
+# moving config over to packages, cleaner
 
 homeassistant:
   name: Home

@@ -1,1 +1,2 @@
-# ha_config
+# homeassistant config
+# more to come
