@@ -1,0 +1,26 @@
+# script called from dashboard
+home_button_triggered:
+  sequence:
+    - if:
+        - condition: state
+          entity_id: binary_sensor.back_gate_2
+          state: "off"
+      then:
+        - service: switch.turn_on
+          data: {}
+          target:
+            entity_id: switch.back_gate_control_2
+
+    - if:
+        - condition: state
+          entity_id: binary_sensor.garage_door
+          state: "off"
+      then:
+        - service: switch.turn_on
+          data: {}
+          target:
+            entity_id: switch.garage_door_control
+
+    - service: alarm_control_panel.alarm_disarm
+      entity_id: alarm_control_panel.alarmo
+mode: single

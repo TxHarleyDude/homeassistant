@@ -1,0 +1,110 @@
+input_boolean:
+  tracy_home:
+    name: Tracy Home
+    icon: mdi:home
+
+automation:
+  - id: 'person_tracy_away'
+    alias: 'Person Tracy Away'
+    initial_state: 'on'
+    trigger:
+      - platform: zone
+        entity_id:
+          - person.tracy_fox
+          - device_tracker.tracys_iphone
+        zone: zone.home
+        event: leave
+      - platform: state
+        entity_id:
+          - person.tracy_fox
+          - device_tracker.tracys_iphone
+        to: "not_home"
+      # HA reload or start
+      - platform: event
+        event_type: automation_reloaded
+      - platform: homeassistant
+        event: start
+    condition:
+        - condition: state
+          entity_id: input_boolean.tracy_home
+          state: "on"
+          # At least one sensor reports not_home
+        - condition: or
+          conditions:
+            # Person is not_home
+            - condition: state
+              entity_id: person.tracy_fox
+              state: "not_home"
+            # Companion app is not home
+            - condition: state
+              entity_id: device_tracker.tracys_iphone
+              state: "not_home"
+    action:
+      - service: script.turn_on
+        entity_id: script.tracy_away
+
+  - id: 'person_tracy_home'
+    alias: 'Person Tracy Home'
+    initial_state: 'on'
+    trigger:
+      # tracy enters the home zone
+      - platform: zone
+        entity_id:
+          - person.tracy_fox
+          - device_tracker.tracys_iphone
+        zone: zone.home
+        event: enter
+      - platform: state
+        entity_id:
+          - person.tracy_fox
+          - device_tracker.tracys_iphone
+        to: "home"
+      # HA reload or start
+      - platform: event
+        event_type: automation_reloaded
+      - platform: homeassistant
+        event: start
+    condition: 
+      - condition: state
+        entity_id: input_boolean.tracy_home
+        state: "off"
+      - condition: or
+        conditions:
+          # Person is home
+          - condition: state
+            entity_id: person.tracy_fox
+            state: "home"
+          # Companion app is home
+          - condition: state
+            entity_id: device_tracker.tracys_iphone
+            state: "home"
+    action:
+      - service: script.turn_on
+        entity_id: script.tracy_home
+
+script:
+  tracy_home:
+    alias: Tracy Home
+    sequence:
+
+      # Change the input boolean to on
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.tracy_home
+
+      - service: notify.pushover
+        data:
+          message: Tracy is marked as home.
+          title: Person Notification
+
+  tracy_away:
+    alias: Tracy Away
+    sequence:
+
+      # Change the input boolean to on
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.tracy_home
+
+      - service: notify.pushover
+        data:
+          message: Tracy is marked as away.
+          title: Person Notification

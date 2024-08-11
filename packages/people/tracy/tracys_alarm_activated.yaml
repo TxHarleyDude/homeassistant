@@ -1,0 +1,34 @@
+input_boolean:
+  tracys_alarm_activated:
+    name: Tracy's Alarm Activated
+    icon: mdi:alarm-bell
+
+automation:
+  - id : tracys_alarm_activated
+    alias: Tracy's Alarm Activated
+    trigger:
+      - platform: event
+        event_type: phone_alarm_tracy
+    condition: 
+      - condition: state
+        entity_id: input_boolean.tracys_alarm_activated
+        state: "off"
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.tracys_alarm_activated
+
+  - id: tracy_alarm_reset
+    alias: Tracy's Alarm Reset
+    trigger:
+      - platform: time
+        at: "23:59:00"
+      - platform: state 
+        entity_id: input_boolean.tracy_phone_plugged_in
+        to: "off"
+    condition:
+      - condition: state 
+        entity_id: input_boolean.tracys_alarm_activated
+        state: "on"
+    action:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.tracys_alarm_activated

@@ -1,0 +1,17 @@
+residents:
+  name: Residents
+  entities:
+    - person.rick_fox
+    - person.tracy_fox
+
+###########################################################
+## House Secure - On means something is open
+##########################################################
+
+house_secure:
+  name: House Secure
+  entities:
+    - binary_sensor.back_gate
+    - binary_sensor.garage_door
+    - binary_sensor.front_door_sensor
+    - binary_sensor.back_door_sensor

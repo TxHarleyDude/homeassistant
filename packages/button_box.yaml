@@ -1,0 +1,47 @@
+
+automation:
+
+  - alias: BB - Garage - Door Open
+    trigger:
+      - platform: state
+        entity_id: input_boolean.garage_open
+        from: "off"
+        to: "on"
+
+    action:
+      - service: switch.turn_on
+        entity_id: switch.led_1
+
+  - alias: BB - Garage - Door Closed
+    trigger:
+      - platform: state
+        entity_id: input_boolean.garage_open
+        from: "on"
+        to: "off"
+
+    action:
+      - service: switch.turn_off
+        entity_id: switch.led_1
+
+script:
+  
+  bb_garage_button_pressed:
+    alias: BB - Garage Button Pressed
+    sequence:
+    - condition: state
+      entity_id: binary_sensor.garage_door
+      state: "on"
+    - service: switch.turn_on
+      target:
+        entity_id: switch.garage_door_control
+      data: {}
+
+  bb_startup:
+    alias: BB - Startup
+    sequence:
+    - condition: state
+      entity_id: input_boolean.garage_open
+      state: "on"
+    - service: switch.turn_on
+      entity_id: switch.led_1
+   

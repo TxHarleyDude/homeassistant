@@ -1,0 +1,9 @@
+media_players:
+  name: Media Players
+  entities:
+    - media_player.living_room_roku
+    - media_player.kodi_patio
+    - media_player.rick_s_echo_dot
+    
+
+    

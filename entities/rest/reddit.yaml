@@ -1,0 +1,15 @@
+---
+resource: http://reddit.com/user/TxHarleyDude/about.json
+scan_interval: 600
+sensor:
+  json_attributes:
+    - awardee_karma
+    - awarder_karma
+    - comment_karma
+    - link_karma
+    - total_karma
+  json_attributes_path: $.data
+  name: reddit_profile_txharleydude
+  unit_of_measurement: karma
+  value_template: >
+    {{ value_json.data.total_karma | int }}

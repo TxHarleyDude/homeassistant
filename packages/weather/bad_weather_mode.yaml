@@ -1,0 +1,140 @@
+input_boolean:
+  bad_weather:
+    name: Bad Weather
+    icon: mdi:weather-cloudy-alert
+
+automation:
+  # Bad Weather Mode On
+  #
+  # Listens for a bunch of weather changes and
+  # then adjust an input_boolean for bad weather
+  #
+  - id: "bad_weather_mode_on"
+    initial_state: "on"
+    alias: "Bad Weather Mode On"
+    trigger:
+      # House becomes occupied
+      - platform: state
+        entity_id: input_boolean.house_occupied
+        to: "on"
+      # Bad weather
+      - platform: state
+        entity_id: sensor.pirateweather_summary
+        to:
+          - "exceptional"
+          - "lightning"
+          - "rainy"
+          - "snowy"
+          - "snowy rainy"
+      # It's getting cloudy outside
+      - platform: numeric_state
+        entity_id: sensor.pirateweather_cloud_coverage
+        above: 75
+      # It's getting dark outside
+#      - platform: state
+#        entity_id: sensor.tempest_illuminance
+#        below: 50
+    condition:
+      # The house is occupied
+      - condition: state
+        entity_id: input_boolean.house_occupied
+        state: "on"
+      # Bad weather not already on
+      - condition: state
+        entity_id: input_boolean.bad_weather
+        state: "off"
+      # The sun is above the horizon
+      - condition: state
+        entity_id: sun.sun
+        state: "above_horizon"
+      # There is bad weather outside
+      - condition: or
+        conditions:
+          # Bad weather conditions
+          - condition: state
+            entity_id: sensor.pirateweather_summary
+            state:
+              - "exceptional"
+              - "lightning"
+              - "rainy"
+              - "snowy"
+              - "snowy rainy"
+          # There are weather alerts
+          - condition: numeric_state
+            entity_id: sensor.pirateweather_alerts
+            above: 1
+#          - condition: and
+#            conditions:
+#              - condition: or
+#                conditions:
+#                  # It's raining
+#                  - condition: numeric_state
+#                    entity_id: sensor.tempest_precipitation
+#                    above: ".01"
+#                  # Rain is becoming more intense
+#                  - condition: state
+#                    entity_id: sensor.tempest_precipitation_intensity
+#                    above: ".25"
+#              # AND it's kinda dark outside
+#              - condition: numeric_state
+#                entity_id: sensor.tempest_illuminance
+#                below: 150
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.bad_weather
+
+  # Bad Weather Mode Off
+  #
+  # Listens for a bunch of weather changes and
+  # then adjust an input_boolean if weather improves
+  #
+  - id: "bad_weather_mode_off"
+    initial_state: "on"
+    alias: "Bad Weather Mode Off"
+    trigger:
+      # House becomes occupied
+      - platform: state
+        entity_id: input_boolean.house_occupied
+        to: "off"
+      - platform: state
+        entity_id: sensor.pirateweather_summary
+        to: "sunny"
+      # Not that cloudy
+      - platform: numeric_state
+        entity_id: sensor.pirateweather_cloud_coverage
+        above: "41"
+      # It's getting brighter outside
+      - platform: numeric_state
+        entity_id: sensor.tempest_illuminance
+        above: 150
+    condition:
+      # The house is occupied
+      - condition: state
+        entity_id: input_boolean.house_occupied
+        state: "on"
+      # Bad weather already on
+      - condition: state
+        entity_id: input_boolean.bad_weather
+        state: "on"
+      # The sun is above the horizon
+      - condition: state
+        entity_id: sun.sun
+        state: "above_horizon"
+      # Weather isn't too bad anymore
+      - condition: or
+        conditions:
+          - condition: state
+            entity_id: sensor.pirateweather_summary
+            state: "sunny"
+          - condition: state
+            entity_id: sensor.pirateweather_summary
+            state: "clear"
+          - condition: state
+            entity_id: sensor.pirateweather_summary
+            state: "party cloudy"
+          - condition: numeric_state
+            entity_id: sensor.pirateweather_cloud_coverage
+            above: "41"
+    action:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.bad_weather  

@@ -1,0 +1,8 @@
+---
+# https://www.home-assistant.io/docs/automation/
+automation ui: !include ../automations.yaml
+# automation manual: !include_dir_list ../automations ---Does not work. Find out why!
+automation manual: !include_dir_merge_list ../automations
+
+automation: !include automations.yaml
+automation mine: !include_dir_list automation/

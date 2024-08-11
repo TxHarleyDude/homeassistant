@@ -1,0 +1,8 @@
+anniversaries:
+  sensors:
+  - name: Tracy's Birthday
+    date: '1967-12-18'
+  - name: Rick's Birthday
+    date: '1967-03-19'
+  - name: Wedding Anniversary
+    date: '1989-04-15'

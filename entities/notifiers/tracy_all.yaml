@@ -1,0 +1,6 @@
+---
+# https://www.home-assistant.io/integrations/notify.group/
+platform: group
+name: tracy_all
+services:
+  - service: mobile_app_tracys_iphone

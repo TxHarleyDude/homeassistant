@@ -1,0 +1,110 @@
+input_boolean:
+  rick_home:
+    name: Rick Home
+    icon: mdi:home
+
+automation:
+  - id: 'person_rick_away'
+    alias: 'Person Rick Away'
+    initial_state: 'on'
+    trigger:
+      - platform: zone
+        entity_id:
+          - person.rick_fox
+          - device_tracker.ricks_iphone
+        zone: zone.home
+        event: leave
+      - platform: state
+        entity_id:
+          - person.rick_fox
+          - device_tracker.ricks_iphone
+        to: "not_home"
+      # HA reload or start
+      - platform: event
+        event_type: automation_reloaded
+      - platform: homeassistant
+        event: start
+    condition:
+        - condition: state
+          entity_id: input_boolean.rick_home
+          state: "on"
+          # At least one sensor reports not_home
+        - condition: or
+          conditions:
+            # Person is not_home
+            - condition: state
+              entity_id: person.rick_fox
+              state: "not_home"
+            # Companion app is not home
+            - condition: state
+              entity_id: device_tracker.ricks_iphone
+              state: "not_home"
+    action:
+      - service: script.turn_on
+        entity_id: script.rick_away
+
+  - id: 'person_rick_home'
+    alias: 'Person Rick Home'
+    initial_state: 'on'
+    trigger:
+      # Rick enters the home zone
+      - platform: zone
+        entity_id:
+          - person.rick_fox
+          - device_tracker.ricks_iphone
+        zone: zone.home
+        event: enter
+      - platform: state
+        entity_id:
+          - person.rick_fox
+          - device_tracker.ricks_iphone
+        to: "home"
+      # HA reload or start
+      - platform: event
+        event_type: automation_reloaded
+      - platform: homeassistant
+        event: start
+    condition: 
+      - condition: state
+        entity_id: input_boolean.rick_home
+        state: "off"
+      - condition: or
+        conditions:
+          # Person is home
+          - condition: state
+            entity_id: person.rick_fox
+            state: "home"
+          # Companion app is home
+          - condition: state
+            entity_id: device_tracker.ricks_iphone
+            state: "home"
+    action:
+      - service: script.turn_on
+        entity_id: script.rick_home
+
+script:
+  rick_home:
+    alias: Rick Home
+    sequence:
+
+      # Change the input boolean to on
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.rick_home
+
+      - service: notify.pushover
+        data:
+          message: Rick is marked as home.
+          title: Person Notification
+
+  rick_away:
+    alias: Rick Away
+    sequence:
+
+      # Change the input boolean to on
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.rick_home
+
+      - service: notify.pushover
+        data:
+          message: Rick is marked as away.
+          title: Person Notification

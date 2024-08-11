@@ -1,0 +1,11 @@
+- platform: template
+  sensors:
+    air_filter_days_remaining:
+      friendly_name: Air Filter Days Remaining
+      unit_of_measurement: days
+      icon_template: "mdi:calendar-clock"
+      value_template: >-
+        {%- set inst = as_timestamp(states('input_datetime.air_filter_installed')) -%}
+        {%- set dif = states('input_number.air_filter_lifespan') | int * 86400 -%}
+        {%- set nt = as_timestamp(states('sensor.date')) -%}
+        {{ (((inst + dif) - nt) / 86400) | round(0) }}

@@ -1,0 +1,6 @@
+logbook:
+  exclude:
+    entities:
+      - sensor.date
+      - sensor.time
+      - sensor.er605_up_time

@@ -1,0 +1,14 @@
+sensor:
+  - platform: template
+    sensors:
+      days_till_filter_replacement:
+        friendly_name: Days Till Filter Replacement
+        unit_of_measurement: days
+        icon_template: "mdi:calendar-clock"
+        value_template: >-
+          {% set t = now() %}
+          {% set midnight = today_at() %}
+          {% set event = state_attr('calendar.hvac_filter', 'start_time') | as_datetime | as_local %}
+          {% set delta = event - midnight %}
+          {{ delta.days }}
+

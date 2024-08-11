@@ -1,0 +1,316 @@
+- id: '1635168063973'
+  alias: Timed Event - Trash Day
+  description: Send Pushover notification for trash day
+  trigger:
+  - platform: time
+    at: 07:00:00
+  condition:
+  - condition: time
+    weekday:
+    - wed
+  action:
+  - service: notify.pushover
+    data:
+      message: Today is trash day
+      title: Home Assistant
+  mode: single
+- id: '1635252134480'
+  alias: Timed Event - Recycling Day
+  description: ''
+  trigger:
+  - platform: time
+    at: 07:00:00
+  condition:
+  - condition: time
+    weekday:
+    - wed
+  - condition: template
+    value_template: '{{ now().isocalendar().week is even }}'
+  action:
+  - service: notify.pushover
+    data:
+      message: Recycling Day
+      title: Home Assistant
+  mode: single
+- id: change_filters_message
+  alias: Timed Event - Change Filters Message
+  trigger:
+  - platform: time
+    at: '10:00:00'
+  - platform: time
+    at: '19:00:00'
+  condition:
+  - condition: template
+    value_template: '{{ now().day == 1 and now().month in [ 1, 4, 7, 10 ] }}'
+  action:
+  - service: notify.pushover
+    data:
+      message: Change HVAC Filter
+      title: Home Assistant
+- id: '1636498355579'
+  alias: Kodi Profile Changed
+  description: ''
+  trigger:
+  - platform: event
+    event_type: kodi_call_method_result
+    event_data:
+      input:
+        method: Profiles.CurrentProfile
+  condition: []
+  action:
+  - service: system_log.write
+    data:
+      message: Hello Kodi
+  mode: single
+- id: '1681008702192'
+  alias: Roku Paused
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - media_player.living_room_roku
+    from: playing
+    to: paused
+  condition: []
+  action:
+  - type: turn_on
+    device_id: 7062d45efa957f1a5ab58568aa80b6e5
+    entity_id: switch.patiolights
+    domain: switch
+  mode: single
+- id: '1681008759794'
+  alias: Roku Played
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - media_player.living_room_roku
+    from: paused
+    to: playing
+  condition: []
+  action:
+  - type: turn_off
+    device_id: 7062d45efa957f1a5ab58568aa80b6e5
+    entity_id: switch.patiolights
+    domain: switch
+  mode: single
+- id: '1681175986353'
+  alias: Alarmo - Triggered
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - alarm_control_panel.alarmo
+    to: triggered
+  condition: []
+  action:
+  - service: light.turn_on
+    data:
+      effect: Alarmo - Triggered
+    target:
+      entity_id: light.livingroom_tv_leds
+  mode: single
+- id: '1681943556314'
+  alias: Low battery detection
+  description: ''
+  use_blueprint:
+    path: homeassistant/low-battery-detection-notification.yaml
+    input:
+      order: name
+      time: 07:00:00
+      exclude:
+      - sensor.ricks_iphone_battery_level
+      - sensor.tracys_iphone_battery_level
+      - sensor.sm_t500_battery_level
+      actions:
+      - service: notify.pushover
+        data:
+          message: '{{sensors}}'
+      threshold: 20
+- id: '1682540595241'
+  alias: Tracy Entering Home Zone
+  description: ''
+  trigger:
+  - platform: zone
+    entity_id: device_tracker.tracys_iphone
+    zone: zone.home
+    event: enter
+  condition: []
+  action:
+  - service: notify.alexa_media_rick_s_echo_dot
+    data:
+      message: Tracy has entered the Home zone.
+  mode: single
+- id: '1700939591775'
+  alias: Diskstation Online
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - button.diskstation_shutdown
+    from: unavailable
+    to:
+  condition: []
+  action:
+  - service: notify.pushover
+    data:
+      message: Diskstation Online
+      title: Diskstation Alert
+  mode: single
+- id: '1701457944332'
+  alias: Confirm AC Filter Change
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.filter_door_sensor
+    to: 'on'
+  condition: []
+  action:
+  - service: notify.mobile_app_ricks_iphone
+    data:
+      message: Did you change AC filter?
+      title: Notification
+      data:
+        actions:
+        - action: FILTER_CHANGED
+          title: 'Yes'
+          icon: sfsymbols:checkmark.icloud
+        - action: IGNORED
+          title: Ignore
+          icon: sfsymbols:bin.xmark
+          desctruvtive: true
+  - wait_for_trigger:
+    - platform: event
+      event_type: mobile_app_notification_action
+      event_data:
+        action: FILTER_CHANGED
+    timeout:
+      hours: 0
+      minutes: 1
+      seconds: 0
+      milliseconds: 0
+  - service: input_boolean.turn_off
+    data: {}
+    target:
+      entity_id: input_boolean.ac_filter_needs_changing
+  mode: single
+- id: '1704297733089'
+  alias: Screen Auto On/Off
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - switch.galaxy_tab_a7_motion_detection
+    to: 'on'
+    id: motion
+  - platform: state
+    entity_id:
+    - switch.galaxy_tab_a7_motion_detection
+    to: 'off'
+    id: no motion
+  condition:
+  - condition: trigger
+    id:
+    - motion
+  - condition: trigger
+    id:
+    - no motion
+  action:
+  - service: switch.turn_on
+    target:
+      device_id: d11010a541e53118a778be0378056efa
+    data: {}
+  - service: switch.turn_off
+    target:
+      device_id: d11010a541e53118a778be0378056efa
+    data: {}
+  mode: single
+- id: '1720391053317'
+  alias: HVAC Off
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.hvac_monitor_vibration
+    from: 'on'
+    to: 'off'
+  condition: []
+  action:
+  - service: notify.alexa_media_rick_s_echo_dot
+    metadata: {}
+    data:
+      message: HVAC turned off
+  mode: single
+- id: ricks_wifi_status
+  alias: Rick's WiFi status
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: sensor.ricks_iphone_ssid
+  - platform: homeassistant
+    event: start
+  - platform: event
+    event_type: automation_reloaded
+  action:
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ ''SLYFOX'' in states(''sensor.ricks_iphone_ssid'') }}'
+      sequence:
+      - service: mqtt.publish
+        data:
+          topic: location/ricks_wifi
+          payload: home
+          retain: true
+    default:
+    - service: mqtt.publish
+      data:
+        topic: location/ricks_wifi
+        payload: not_home
+        retain: true
+  initial_state: 'on'
+- id: '1722257844555'
+  alias: Office has been vacated
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - input_boolean.office_occupied
+    to: 'off'
+  condition: []
+  action:
+  - service: notify.alexa_media_rick_s_echo_dot
+    metadata: {}
+    data:
+      message: Office has been vacated.
+  mode: single
+- id: '1722566036838'
+  alias: Voice - Sentence
+  description: ''
+  trigger:
+  - platform: conversation
+    command: open the car door
+  condition: []
+  action:
+  - service: notify.alexa_media_rick_s_echo_dot
+    metadata: {}
+    data:
+      message: '"I will " {{ trigger.sentence }}
+
+        '
+  mode: single
+- id: '1722911048220'
+  alias: Test - Rick's Alarm
+  description: ''
+  trigger:
+  - platform: event
+    event_type: phone_alarm_rick
+    event_data: {}
+  condition: []
+  action:
+  - service: notify.alexa_media_rick_s_echo_dot
+    metadata: {}
+    data:
+      message: Rick's alarm went off
+  mode: single

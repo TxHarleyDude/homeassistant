@@ -1,0 +1,81 @@
+esphome:
+  name: living-room-tv-leds
+  friendly_name: Living-Room-Tv-Leds
+
+esp8266:
+  board: d1_mini
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+  - platform: esphome
+    password: "e0e1a3492be953c0e8fda4e21089f1f0"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Living-Room-Tv-Leds"
+    password: "2lTc0tYSjxiE"
+
+captive_portal:
+
+sensor:
+  - platform: dht
+    model: DHT22_TYPE2
+    pin: GPIO2
+    temperature:
+      name: "Living Room Temperature"
+    humidity:
+      name: "Living Room Humidity"
+    update_interval: 60s
+    
+light:
+  - platform: neopixelbus
+    type: grb
+    pin: GPIO3
+    num_leds: 79
+    name: "TV Light"
+    variant: ws2812x
+    default_transition_length: 1s
+    color_correct: [50%, 50%, 50%]
+    effects: 
+      - addressable_random_twinkle:
+          progress_interval: 250ms
+      - addressable_fireworks:
+      - addressable_flicker: 
+      - addressable_rainbow:
+      - addressable_color_wipe:
+      - addressable_scan:
+          name: Scan Effect With Custom Values
+          move_interval: 100ms
+          scan_width: 6
+      - strobe:
+          name: Alarmo - Pending
+          colors:
+            - state: true
+              brightness: 50%
+              red: 100%
+              green: 90%
+              blue: 0%
+              duration: 750ms
+            - state: false
+              duration: 500ms
+      - strobe:
+          name: Alarmo - Triggered
+          colors:
+            - state: true
+              brightness: 50%
+              red: 100%
+              green: 0%
+              blue: 0%
+              duration: 750ms
+            - state: false
+              duration: 500ms
+ 

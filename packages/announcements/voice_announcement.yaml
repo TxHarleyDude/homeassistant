@@ -1,0 +1,16 @@
+input_text:
+  latest_voice_announcement:
+    name: Latest Voice Announcement
+    icon: mdi:bullhorn
+
+script:
+  voice_announcement:
+    alias: Voice Announcement
+    mode: "queued"
+
+    sequence:
+      # Save the latest message
+      - service: input_text.set_value
+        entity_id: input_text.latest_voice_announcement
+        data:
+          value: "Hello World"

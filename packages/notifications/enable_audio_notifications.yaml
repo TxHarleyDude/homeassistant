@@ -1,0 +1,3 @@
+input_boolean:
+  audio_notifications:
+    name: Audio Notifications

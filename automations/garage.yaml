@@ -1,0 +1,88 @@
+#################################################################
+## Garage - Lets make sure garage closed from another automation
+#################################################################
+
+- alias: Garage - Double Check Closed
+  trigger:
+    - platform: state
+      entity_id: input_boolean.garage_closing
+      to: "on"
+      for: "0:00:30"
+
+  condition:
+    - condition: state
+      entity_id: binary_sensor.garage_door
+      state: "on"
+
+  action:
+    - service: notify.alexa_media_rick_s_echo_dot
+      data:
+        message: >-
+          {{ [ 
+              "The garage door has not been closed. Please look into it.", 
+              "You left the garage door open again. Go close it, pronto.",
+              "I can't do that right now. The garage door is still open.",
+              "Once the garage door has been closed, I will do that."
+              ] | random }}
+
+##########################################################
+## Garage Door - Close
+##########################################################
+
+- alias: Bedtime - Garage Door
+  id: "bedtime_garage_door"
+
+  trigger:
+    - platform: state
+      entity_id: input_boolean.bedtime
+      to: "on"
+    - platform: state
+      entity_id: group.residents
+      to: not_home
+      for: "0:02:00"
+
+  condition:
+    - condition: state
+      entity_id: binary_sensor.garage_door
+      state: "on"
+
+  action:
+    - service: switch.turn_on
+      entity_id:
+        - switch.garage_door_control
+    - service: homeassistant.turn_on
+      entity_id:
+        - input_boolean.garage_closing
+
+##############################################################
+## Garage - Garage door closed so reset Garage Closing switch
+##############################################################
+
+- alias: Garage - Door Closed
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.garage_door
+      from: "on"
+      to: "off"
+
+  action:
+    - service: homeassistant.turn_off
+      entity_id: input_boolean.garage_closing
+    - service: homeassistant.turn_off
+      entity_id: input_boolean.garage_open
+       
+
+##############################################################
+## Garage - Garage door open
+##############################################################
+
+- alias: Garage - Door Open
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.garage_door
+      from: "off"
+      to: "on"
+
+  action:
+    - service: homeassistant.turn_on
+      entity_id: input_boolean.garage_open

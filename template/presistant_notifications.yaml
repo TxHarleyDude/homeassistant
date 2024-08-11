@@ -1,0 +1,24 @@
+- trigger:
+  - platform: persistent_notification
+    update_type:
+    - added
+    - removed
+
+  sensor:
+    - unique_id: persistent_notifications_overview
+      name: Persistent notifications
+      device_class: timestamp
+      state: >
+        {{ now() }}
+      attributes:
+        notifications: >
+          {% set msgs = this.attributes.get('notifications', []) %}
+          {% if trigger.update_type == 'added' %}
+            {{ msgs + [{
+                "id": trigger.notification.notification_id,
+                "title": trigger.notification.title | default(''),
+                "message": trigger.notification.message | default(''),
+                "time": trigger.notification.created_at.isoformat() }] }}
+          {% else %}
+            {{ msgs | rejectattr('id', 'eq', trigger.notification.notification_id) | list }}
+          {% endif %}

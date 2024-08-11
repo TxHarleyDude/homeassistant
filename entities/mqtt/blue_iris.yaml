@@ -1,0 +1,11 @@
+# Blue Iris Desk Camera Sensor
+binary_sensor:
+  - name: Patio Motion
+    unique_id: "blueiris_patio_motion"
+    device_class: motion
+    state_topic: BlueIris/camera/patio/motion
+    payload_on: "on"
+    payload_off: "off"
+    off_delay: 45
+    force_update: true
+    qos: 0

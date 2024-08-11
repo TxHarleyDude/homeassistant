@@ -1,0 +1,18 @@
+- alias: "Cold Weather Alerts"
+  trigger:
+    - platform: time
+      at: "07:00:00"
+  action:
+    - service: notify.pushover
+      data:
+        message: >-
+          {% set dates = state_attr('weather.home', 'forecast') %}
+          {% set ns = namespace(message = '') %}
+          {% for i in range(1, dates | count, 1) %}
+          {% if state_attr('weather.home','forecast')[i].templow | int < 40 %}
+            {##Freeze Check: {{ as_datetime(state_attr('weather.home','forecast')[i].datetime).strftime('%a') }}: Low Temp: {{ state_attr('weather.home','forecast')[i].templow | int}}##}
+            {% set ns.message = ns.message ~ as_datetime(state_attr('weather.home','forecast')[i].datetime).strftime('%a')  ~ " Low Temp:" ~ state_attr('weather.home','forecast')[i].templow ~ "\n" %}
+          {%- endif %}
+          {% endfor %}
+          {{ns.message}}
+        title: Pollen Levels

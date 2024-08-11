@@ -1,0 +1,5 @@
+room_presence_devices:
+  name: "Devices tracked by Room Assistant"
+  entities:
+    - sensor.rick_room_presence
+    - sensor.tracy_room_presence

@@ -1,0 +1,71 @@
+binary_sensor:
+  - platform: template
+    sensors:
+      birthday_tomorrow:
+        friendly_name: Birthday Tomorrow
+        value_template: >-
+          {% set t = now() %}
+          {% set midnight = today_at() %}
+          {% set event = state_attr("calendar.birthdays", "start_time") | as_datetime | as_local %}
+          {% set delta = event - midnight %}
+          {{ delta.days == 1 }}
+
+automation:
+  - id: "birthday_tomorrow_reminder"
+    alias: "Birthday Tomorrow Reminder"
+    mode: "single"
+    trigger:
+      # At 6:30 PM
+      - platform: time
+        at: "18:30:00"
+      # At 8:05pm
+      - platform: time
+        at: "20:05:00"
+    condition:
+      # House is occupied
+      - condition: state
+        entity_id: input_boolean.house_occupied
+        state: "on"
+      # Binary sensor is ON
+      - condition: state
+        entity_id: binary_sensor.birthday_tomorrow
+        state: "on"
+      # After 5pm
+      - condition: time
+        after: "17:00:00"
+    action:
+      - service: script.general_notification
+        data:
+          message: "Tomorrow is {{states.calendar.birthdays.attributes.message}}"
+          title: "Birthday Reminder"
+          devices: "rf"
+          priority: "active"
+          tag: "birthday-reminder"
+
+  - id: "birthday_today_reminder"
+    alias: "Birthday Today Reminder"
+    mode: "single"
+    trigger:
+      # At 7:30 am
+      - platform: time
+        at: "07:35:00"
+      # At 5:15pm
+      - platform: time
+        at: "17:15:00"
+    condition:
+      # House is occupied
+      - condition: state
+        entity_id: input_boolean.house_occupied
+        state: "on"
+      # Birthday calendar is ON
+      - condition: state
+        entity_id: calendar.birthdays
+        state: "on"
+    action:
+      - service: script.general_notification
+        data:
+          message: "Today is {{states.calendar.birthdays.attributes.message}}"
+          title: "Birthday Reminder"
+          devices: "rf"
+          priority: "active"
+          tag: "birthday-reminder"

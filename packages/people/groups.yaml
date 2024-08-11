@@ -1,0 +1,8 @@
+group:
+  person_rick:
+    name: Rick's Presense
+    all: true
+    entities:
+      - device_tracker.rick_iphone_detect
+      - device_tracker.rick_wifi
+

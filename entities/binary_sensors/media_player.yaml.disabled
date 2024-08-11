@@ -1,0 +1,6 @@
+# Example configuration.yaml entry
+binary_sensor:
+  - platform: ping
+    host: 192.168.0.1
+    count: 2
+    name: Living Rom Media Player

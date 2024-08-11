@@ -1,0 +1,40 @@
+##########################################################
+## Open Back Gate
+##########################################################
+
+- alias: Open Back Gate
+  id: open_back_gate
+  trigger:
+    - platform: state
+      entity_id: input_boolean.home_button_triggered
+      to: "on"
+
+  condition:
+    - condition: state
+      entity_id: binary_sensor.back_gate_2
+      state: "off"
+
+  action:
+    - service: switch.turn_on
+      entity_id: switch.back_gate_control_2
+
+##########################################################
+## Reset Home Button Switch
+##########################################################
+
+- alias: Home Triggered - Reset Switch
+  id: "home_triggered_reset_switch"
+
+  trigger:
+    - platform: state
+      entity_id: input_boolean.home_button_triggered
+      from: "off"
+      to: "on"
+      for:
+        hours: 0
+        minutes: 0
+        seconds: 5
+
+  action:
+    - service: homeassistant.turn_off
+      entity_id: input_boolean.home_button_triggered

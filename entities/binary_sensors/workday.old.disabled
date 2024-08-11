@@ -1,0 +1,9 @@
+# Activates Workday Sensor
+- platform: workday
+  name: Workday
+  country: US
+  workdays: [mon, tue, wed, thu, fri]
+  excludes: [sat, sun]
+  remove_holidays:
+    - 'Thanksgiving'
+    - 'Christmas Day'

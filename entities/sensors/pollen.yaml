@@ -1,0 +1,69 @@
+- platform: rest
+  # API call to get air quality
+  # Result goes into outdoorQuality attribute in JSON format
+  name: AccuPollen
+  verify_ssl: true
+  scan_interval: 1800
+  resource: https://dataservice.accuweather.com/forecasts/v1/daily/5day/336095?apikey=5FaX6Q9cwyFCStHKAe5uMfZCsGPrVC2B&details=true&language=en-us
+  headers:
+    User-Agent: Home Assistant
+    Content-Type: application/json
+  method: GET
+  json_attributes:
+    - Headline
+    - DailyForecasts
+  value_template: 'AccuWeather Pollen'
+
+# Enumerate JSON to populate various template sensors
+- platform: template
+  sensors:
+    air_quality:
+      value_template: '{{ states.sensor.accupollen.attributes["DailyForecasts"][0]["AirAndPollen"][0]["Category"]  | capitalize }}'
+      friendly_name: "Air Quality"
+      icon_template: mdi:air-filter
+
+    # Pollen sensors
+    #air_pollen_level:
+    #  value_template: '{{ now().strftime("%d/%m/%Y - %H:%M")  | capitalize }}'
+    #  friendly_name: "Pollen Level"
+    #  icon_template: mdi:flower
+
+    air_pollen_level_grass:
+      value_template: '{{ states.sensor.accupollen.attributes["DailyForecasts"][0]["AirAndPollen"][1]["Category"]  | capitalize }}'
+      friendly_name: "Pollen Level Grass"
+      icon_template: mdi:flower
+
+    air_pollen_level_grass_tomorrow:
+      value_template: '{{ states.sensor.accupollen.attributes["DailyForecasts"][1]["AirAndPollen"][1]["Category"]  | capitalize }}'
+      friendly_name: "Pollen Level Grass Tomorrow"
+      icon_template: mdi:flower
+
+    air_pollen_level_weed:
+      value_template: '{{ states.sensor.accupollen.attributes["DailyForecasts"][0]["AirAndPollen"][3]["Category"]  | capitalize }}'
+      friendly_name: "Pollen Level Weed"
+      icon_template: mdi:sprout
+
+    air_pollen_level_weed_tomorrow:
+      value_template: '{{ states.sensor.accupollen.attributes["DailyForecasts"][1]["AirAndPollen"][3]["Category"]  | capitalize }}'
+      friendly_name: "Pollen Level Weed Tomorrow"
+      icon_template: mdi:sprout
+
+    air_pollen_level_tree:
+      value_template: '{{ states.sensor.accupollen.attributes["DailyForecasts"][0]["AirAndPollen"][4]["Category"]  | capitalize }}'
+      friendly_name: "Pollen Level Tree"
+      icon_template: mdi:tree
+
+    air_pollen_level_tree_tomorrow:
+      value_template: '{{ states.sensor.accupollen.attributes["DailyForecasts"][1]["AirAndPollen"][4]["Category"]  | capitalize }}'
+      friendly_name: "Pollen Level Tree Tomorrow"
+      icon_template: mdi:tree
+
+    air_pollen_level_mold:
+      value_template: '{{ states.sensor.accupollen.attributes["DailyForecasts"][0]["AirAndPollen"][2]["Category"]  | capitalize }}'
+      friendly_name: "Pollen Level Mold"
+      icon_template: mdi:virus
+
+    air_pollen_level_mold_tomorrow:
+      value_template: '{{ states.sensor.accupollen.attributes["DailyForecasts"][1]["AirAndPollen"][2]["Category"]  | capitalize }}'
+      friendly_name: "Pollen Level Mold Tomorrow"
+      icon_template: mdi:virus

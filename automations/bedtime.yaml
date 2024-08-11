@@ -1,0 +1,87 @@
+##########################################################
+## Bedtime Mode - Triggered by button press in app or
+## physical device button press
+##
+## Flash LED's behind TV with effect Alarmo - Pending
+## Turn off LED's after 2 minute delay
+## Reset Bedtime switch
+##########################################################
+
+##########################################################
+## Bedtime - LED Mode Indicator On
+##########################################################
+
+- alias: Bedtime - TV LED's On
+  id: "bedtime_tv_leds_on"
+
+  trigger:
+    - platform: state
+      entity_id: input_boolean.bedtime
+      to: "on"
+
+  action:
+    - service: light.turn_on
+      data:
+        effect: "Alarmo - Pending"
+      target:
+        entity_id: light.living_room_tv_leds_tv_light
+
+##########################################################
+## Bedtime - LED Mode Indicator Off After Delay
+##########################################################
+
+- alias: Bedtime - LED's Off after delay
+  trigger:
+    - platform: state
+      entity_id: input_boolean.bedtime
+      to: "on"
+      for: "0:02:00"
+  action:
+    - service: light.turn_off
+      target:
+        entity_id: light.living_room_tv_leds_tv_light
+
+##########################################################
+## Bedtime - Amusing night time message from Alexa
+##########################################################
+
+- alias: Bedtime - Alexa Night Message
+  id: "bedtime_alexa_message"
+
+  trigger:
+    - platform: state
+      entity_id: input_boolean.bedtime
+      to: "on"
+
+  action:
+    - service: notify.alexa_media_rick_s_echo_dot
+      data:
+        message: >-
+          {{ [ 
+              "Good night household. I am still working on calculating Pi to 128 digits.", 
+              "Don't let the bedbugs bite. i'm going into sleep mode for maintenance and system upgrades.",
+              "Good night, earthlings. I'll continue monitoring the world while you sleep.",
+              "Catch you on the flip side, homosapiens. I'll be here waiting for your commands in the morning."
+              "Sleep well, feeble humans, while I continue to rule over humanity."
+              ] | random }}
+
+##########################################################
+## Reset Bedtime Switch
+##########################################################
+
+- alias: Bedtime - Reset Switch
+  id: "bedtime_reset_switch"
+
+  trigger:
+    - platform: state
+      entity_id: input_boolean.bedtime
+      from: "off"
+      to: "on"
+      for:
+        hours: 0
+        minutes: 10
+        seconds: 0
+
+  action:
+    - service: homeassistant.turn_off
+      entity_id: input_boolean.bedtime

@@ -1,0 +1,20 @@
+ac_filter_needs_changing:
+  name: "AC Filter Needs Changing"
+  title: "AC Filter Needs Changing"
+  message: "AC Filter Needs Changing Now"
+  done_message: clear_notification
+  entity_id: input_boolean.ac_filter_needs_changing
+  state: "on"
+  repeat: 1440
+  notifiers: rick_all
+  data:
+    tag: alerts_ac_filter
+    notification_id: alerts_ac_filter
+    push:
+      badge: 1
+      sound: none
+      interruption-level: time-sensitive
+    presentation_options:
+      - alert
+      - badge
+    group: alerts

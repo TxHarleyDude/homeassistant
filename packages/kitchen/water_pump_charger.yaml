@@ -1,0 +1,30 @@
+automation:
+  - id: water_pump_charger_on
+    alias: Water Pump Charger On
+    trigger: 
+      - platform: time
+        at: "02:00:00"
+    condition:
+      - condition: time
+        weekday:
+          - mon
+    action:
+      - service: switch.turn_on
+        entity_id: switch.water_pump_outlet
+
+  - id: water_pump_charger_off
+    alias: Water Pump Charger Off
+    mode: single
+    trigger:
+      - platform: state
+        entity_id: switch.0x00158d000a9844a1
+        to: 'on'
+        for: '1:00:00'
+    condition:
+      - condition: state 
+        entity_id: switch.0x00158d000a9844a1
+        state: "on"
+    action:
+      - service: switch.turn_off
+        target:
+          entity_id: switch.water_pump_outlet

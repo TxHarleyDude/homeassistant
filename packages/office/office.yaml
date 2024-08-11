@@ -1,0 +1,69 @@
+group:
+  office_motion:
+    name: Office Motion Sensors
+    entities:
+      binary_sensor.office_motion_occupancy
+
+timer:
+  office_motion_timer:
+    name: Office Motion Timer
+    duration: 00:05:00
+    restore: true
+    
+input_boolean:
+  office_occupied:
+    name: Office Occupied
+    icon: mdi:home
+
+  office_dnd:
+    name: Office Do Not Disturb
+    icon: mdi:minus-circle
+
+template:
+  - binary_sensor:
+      - name: "Office PC Active"
+        state: >-
+          {{ is_state('sensor.rick_office_session_state', 'Unlocked') }}
+
+automation:
+  - alias: Office occupied
+    initial_state: 'on'
+    trigger:
+      - platform: state
+        entity_id: group.office_motion
+        to: 'on'
+      - platform: state
+        entity_id: sensor.rick_office_session_state
+        to: 'Unlocked'
+    condition:
+      - condition: state
+        entity_id: input_boolean.house_occupied
+        state: 'on'
+    action:
+      - service: timer.start
+        target: 
+          entity_id: timer.office_motion_timer
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.office_occupied
+
+  - alias: Office unoccupied
+    id: office_unoccupied
+    initial_state: 'on'
+    trigger:
+      - platform: event
+        event_type: timer.finished
+        event_data:
+          entity_id: timer.office_motion_timer
+    condition:
+      - condition: state
+        entity_id: input_boolean.office_occupied
+        state: 'on'
+      - condition: state
+        entity_id: group.office_motion
+        state: 'off'
+    action:
+      # Idea for this came from https://github.com/skalavala/mysmarthome/tree/master
+      - service_template: >
+          {{ 'input_boolean.turn_off' if states('binary_sensor.office_chair_contact') != 'off' else 'timer.start' }}
+        data:
+          entity_id: "{{ 'input_boolean.office_occupied' if states('binary_sensor.office_chair_contact') != 'off' else 'timer.office_motion_timer' }}"

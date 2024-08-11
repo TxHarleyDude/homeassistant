@@ -1,0 +1,48 @@
+automation:
+  - id: sink_light_off_at_morning
+    alias: Sink Light off at Morning
+    trigger:
+      platform: sun
+      event: sunrise
+      offset: '+00:30:00'
+    action:
+      - service: light.turn_off
+        entity_id: light.0x001788010d38d564
+
+  - alias: Sink Light off at Night
+    id: sink_light_off_at_night
+    trigger:
+      platform: time
+      at: '22:30:00'
+    action:
+      - service: light.turn_off
+        entity_id: light.0x001788010d38d564
+
+  - alias: Sink Light on in Morning
+    id: sink_light_on_in_morning
+    trigger:
+      platform: time
+      at: "03:15:00"
+    condition:
+      - condition: state
+        entity_id: binary_sensor.workday
+        state: "on"
+    action:
+      - service: light.turn_on
+        entity_id: light.0x001788010d38d564
+        data:
+          brightness: 128
+
+  - alias: Sink Light on if House Unoccupied and Dark
+    id: sink_light_on_if_house_unoccupied_and_dark
+    trigger:
+      platform: sun
+      event: sunset
+      offset: '-00:30:00'
+    condition:
+      - condition: state
+        entity_id: group.residents
+        state: not_home
+    action:
+      - service: light.turn_on
+        entity_id: light.0x001788010d38d564

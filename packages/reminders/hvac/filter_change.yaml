@@ -1,0 +1,38 @@
+# Need to have this fire on an event other than days to event as the trigger
+# MAybe when office door is opened in the morning????
+
+automation:
+  - id: hvac_ filter_change_reminder_7_days
+    alias: HVAC Filter Change Reminder 7 Days
+    initial_state: 'on'
+    trigger:
+      - platform: template
+        value_template: >- 
+          {{ is_state('sensor.days_till_filter_replacement', '7') }}
+      # HA reload or start
+#      - platform: event
+#        event_type: automation_reloaded
+#      - platform: homeassistant
+#        event: start
+    action:
+      - service: notify.alexa_media_rick_s_echo_dot
+        data:
+          message: "Change HVAC Filterin 7 days"
+
+  - id: hvac_ filter_change_reminder_today
+    alias: HVAC Filter Change Reminder Today
+    initial_state: 'on'
+    trigger:
+      - platform: template
+        value_template: >- 
+          {{ is_state('sensor.days_till_filter_replacement', '1') }}
+      # HA reload or start
+#      - platform: event
+#        event_type: automation_reloaded
+#      - platform: homeassistant
+#        event: start
+    action:
+      - service: notify.alexa_media_rick_s_echo_dot
+        data:
+          message: "Change HVAC Filter today"
+

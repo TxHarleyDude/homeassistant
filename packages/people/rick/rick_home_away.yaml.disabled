@@ -1,0 +1,130 @@
+input_boolean:
+  rick_home:
+    name: Rick Home
+    icon: mdi:home
+
+  rick_left_zone:
+    name: "Rick Left Home Zone"
+
+automation:
+  # When parked out front, sometimes we leave the home zone then come up the next street and re-enter the home zone
+  # This provides the ability to leave/enter the zone without triggering the rick_away or home script until we are truley gone
+
+  # Possible problem with leaving hten arriving back into zone. Will have to pay more attention
+  - id: "rick_leaves_home_zone"
+    alias: "Rick Leaves Home Zone"
+    trigger:
+    - platform: zone
+      entity_id:
+        - person.rick_fox
+        - device_tracker.ricks_iphone
+      zone: zone.home
+      event: leave
+    condition:
+      - condition: state
+        entity_id: input_boolean.rick_left_zone
+        state: "off"
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.rick_left_zone
+
+  - id: 'rick_enters_home_zone'
+    alias: 'Rick Enters Home Zone'
+    initial_state: 'on'
+    trigger:
+    # Rick enters the home zone
+    - platform: zone
+      entity_id:
+        - person.rick_fox
+        - device_tracker.ricks_iphone
+      zone: zone.home
+      event: enter
+    # HA reload or start
+    - platform: event
+      event_type: automation_reloaded
+    - platform: homeassistant
+      event: start
+    condition: 
+      - condition: state
+        entity_id: input_boolean.rick_home
+        state: "on"
+    action:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.rick_left_zone
+        
+  - id: 'person_rick_away'
+    alias: 'Person Rick Away'
+    initial_state: 'on'
+    trigger:
+      - platform: state
+        entity_id: input_boolean.rick_left_zone
+        to: "on"
+        for:
+          minutes: 2
+      # HA reload or start
+      - platform: event
+        event_type: automation_reloaded
+      - platform: homeassistant
+        event: start
+    condition:
+        - condition: state
+          entity_id: input_boolean.rick_home
+          state: "on"
+          # At least one sensor reports not_home
+        - condition: or
+          conditions:
+            # Person is not_home
+            - condition: state
+              entity_id: person.rick_fox
+              state: "not_home"
+            # Companion app is not home
+            - condition: state
+              entity_id: device_tracker.ricks_iphone
+              state: "not_home"
+    action:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.rick_home
+      - service: notify.pushover
+        data:
+          message: Rick is marked as away.
+          title: Person Notification
+
+  - id: 'person_rick_home'
+    alias: 'Person Rick Home'
+    initial_state: 'on'
+    trigger:
+    # Rick enters the home zone
+    - platform: zone
+      entity_id:
+        - person.rick_fox
+        - device_tracker.ricks_iphone
+      zone: zone.home
+      event: enter
+    # HA reload or start
+    - platform: event
+      event_type: automation_reloaded
+    - platform: homeassistant
+      event: start
+    condition: 
+      - condition: state
+        entity_id: input_boolean.rick_home
+        state: "off"
+      - condition: or
+        conditions:
+          # Person is home
+          - condition: state
+            entity_id: person.rick_fox
+            state: "home"
+          # Companion app is home
+          - condition: state
+            entity_id: device_tracker.ricks_iphone
+            state: "home"
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.rick_home
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.rick_left_zone
+      - service: notify.pushover
+        data:
+          message: Rick is marked as home.
+          title: Person Notification

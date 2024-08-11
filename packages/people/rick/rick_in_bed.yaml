@@ -1,0 +1,59 @@
+# Rick in bed
+# input_boolean.rick_home == on
+# input_boolean.rick_phone_plugged_in == on
+# media_player.living_room_roku == idle
+# input_boolean.office_occupied == off
+# binary_sensor.armed_night_mode == on
+
+input_boolean:
+  rick_in_bed:
+    name: Rick In Bed
+    icon: mdi:bed
+
+automation:
+  - id: 'rick_in_bed'
+    alias: 'Rick In Bed'
+    initial_state: 'on'
+    trigger:
+      - platform: state
+        entity_id: media_player.living_room_roku
+        to: "idle"
+      - platform: state
+        entity_id: input_boolean.rick_phone_plugged_in
+        to: "on"
+      - platform: time
+        at: "22:30:00"
+      - platform: state
+        entity_id: input_boolean.bedtime
+        to: "on"
+      - platform: state
+        entity_id: input_boolean.bedtime
+        to: "on"
+    condition:
+      - condition: time
+        after: '21:00:00'
+        before: '06:00:00'
+      - condition: state 
+        entity_id: input_boolean.rick_home
+        state: "on"
+      - condition: state
+        entity_id: input_boolean.office_occupied
+        state: "off"
+    action:
+      - service: script.turn_on
+        entity_id: script.rick_in_bed
+
+script:
+  rick_in_bed:
+    alias: Rick In Bed
+    sequence:
+      # Change the input boolean to on
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.rick_in_bed
+
+  rick_not_in_bed:
+    alias: Rick Not In Bed
+    sequence:
+      # Change the input boolean to off
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.rick_in_bed

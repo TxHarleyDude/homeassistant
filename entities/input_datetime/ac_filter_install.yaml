@@ -1,0 +1,5 @@
+air_filter_installed:
+  name: Air Filter Installed
+  icon: mdi:air-filter
+  has_date: true
+  has_time: false

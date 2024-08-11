@@ -1,0 +1,35 @@
+automation:
+  - id: garbage_day_notification
+    alias: Garbage Day Notification
+    mode: "single"
+    trigger:
+      - platform: state
+        entity_id: input_boolean.office_occupied
+        to: "on"
+    condition:
+      # House is occupied
+      - condition: state
+        entity_id: input_boolean.house_occupied
+        state: "on"
+      # Garbage day boolean is on
+      - condition: state
+        entity_id: input_boolean.garbage_day
+        state: "on"
+    action:
+      - service: notify.alexa_media_rick_s_echo_dot
+        data:
+          message: &update-message >-
+            {% set message = "Today is garbage collection " %}
+            {% if is_state('input_boolean.recycling_day', 'on') %}
+            {% set message = message + "and recycling " %}
+            {% endif %}
+            {% set message = message + "day." %}
+            {{ message }}
+      - service: script.general_notification
+        data:
+          message: *update-message
+          title: Reminders
+          devices: "rf"
+          priority: "active"
+          tag: "reminder"
+      

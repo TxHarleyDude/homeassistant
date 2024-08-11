@@ -1,0 +1,14 @@
+check_for_notifications:
+  mode: single
+  alias: Check For Notifications
+  sequence:
+    - service: notify.alexa_media_rick_s_echo_dot
+      data:
+        message: >-
+          {% set count = int(state_attr('sensor.tts_message_queue', 'notifications')| length) %}
+          {% if count > 0 %}
+            You have {{ count }} notifications
+          {% else
+          %}
+            You have no notifications
+          {% endif %}

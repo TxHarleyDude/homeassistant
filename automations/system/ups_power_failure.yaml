@@ -1,0 +1,37 @@
+#####
+# Warn on power failuer/UPS kicing in
+# Change input_boolean.ups_on_batteries to on
+#####
+
+- alias: UPS Power Failure
+  id: ups_power_failure
+
+  trigger:
+    entity_id: sensor.ups_status
+    platform: state
+    to: On Battery Battery Discharging
+
+  condition: []
+
+  action:
+    - service: notify.alert
+      data:
+        title: Power Failure!
+        message: HA UPS Status - On Battery Battery Discharging
+        data:
+          tag: ups_power_failure
+          notification_id: ups_power_failure
+          push:
+            badge: 1
+            sound: none
+            interruption-level: time-sensitive
+          presentation_options:
+            - alert
+            - badge
+          group: alerts
+          actions:
+            - title: "Pause Alert"
+              action: pause_alert_updates_available
+    - service: input_boolean.turn_on
+      data: {}
+      entity_id: input_boolean.ups_on_batteries

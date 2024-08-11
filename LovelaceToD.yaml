@@ -1,0 +1,32 @@
+##### SENSOR CONFIG
+binary_sensor:
+  - platform: workday
+    country: US
+
+sensor:
+  - platform: template
+    sensors:
+      lovelace_tod:
+        friendly_name: "Lovelace ToD"
+        value_template: ->
+          {% if is_state("binary_sensor.workday_sensor", "on") %}
+          {% if now() < today_at("09:15") %}
+          work_morning
+          {% elif now() < today_at("17:00") %}
+          workday
+          {% elif now() < today_at("20:00") %}
+          evening
+          {% else %}
+          night
+          {% endif %}
+          {% else %}
+          {% if now() < today_at("10:15") %}
+          weekend_morning
+          {% elif now() < today_at("17:00") %}
+          weekend_day
+          {% elif now() < today_at("20:00") %}
+          evening
+          {% else %}
+          night
+          {% endif %}
+          {% endif %}

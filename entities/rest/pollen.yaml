@@ -1,0 +1,62 @@
+# API call to get air quality
+# Result goes into outdoorQuality attribute in JSON format
+# name: AccuPollen
+verify_ssl: true
+scan_interval: 1800
+resource: https://dataservice.accuweather.com/forecasts/v1/daily/5day/336095?apikey=5FaX6Q9cwyFCStHKAe5uMfZCsGPrVC2B&details=true&language=en-us
+
+# Enumerate JSON to populate various template sensors
+sensor:
+  - name: "Air Quality"
+    unique_id: air_quality
+    value_template: >-
+      '{{ value_json["DailyForecasts"][0]["AirAndPollen"][0]["Category"]  | capitalize }}'
+    icon: mdi:air-filter
+
+  - name: "Pollen Level Grass"
+    unique_id: air_pollen_level_grass
+    value_template: >-
+      '{{ value_json["DailyForecasts"][0]["AirAndPollen"][1]["Category"]  | capitalize }}'
+    icon: mdi:flower
+
+  - name: "Pollen Level Grass Tomorrow"
+    unique_id: air_pollen_level_grass_tomorrow
+    value_template: >-
+      '{{ value_json["DailyForecasts"][1]["AirAndPollen"][1]["Category"]  | capitalize }}'
+    icon: mdi:flower
+
+  - name: "Pollen Level Mold"
+    unique_id: air_pollen_level_mold
+    value_template: >-
+      '{{ value_json["DailyForecasts"][0]["AirAndPollen"][2]["Category"]  | capitalize }}'
+    icon: mdi:virus
+
+  - name: "Pollen Level Mold Tomorrow"
+    unique_id: air_pollen_level_mold_tomorrow
+    value_template: >-
+      '{{ value_json["DailyForecasts"][1]["AirAndPollen"][2]["Category"]  | capitalize }}'
+    icon: mdi:virus
+
+  - name: "Pollen Level Weed"
+    unique_id: air_pollen_level_weed
+    value_template: >-
+      '{{ value_json["DailyForecasts"][0]["AirAndPollen"][3]["Category"]  | capitalize }}'
+    icon: mdi:sprout
+
+  - name: "Pollen Level Weed Tomorrow"
+    unique_id: air_pollen_level_weed_tomorrow
+    value_template: >-
+      '{{ value_json["DailyForecasts"][1]["AirAndPollen"][3]["Category"]  | capitalize }}'
+    icon: mdi:sprout
+
+  - name: "Pollen Level Tree"
+    unique_id: air_pollen_level_tree
+    value_template: >-
+      '{{ value_json["DailyForecasts"][0]["AirAndPollen"][4]["Category"]  | capitalize }}'
+    icon: mdi:tree
+
+  - name: "Pollen Level Tree Tomorrow"
+    unique_id: air_pollen_level_tree_tomorrow
+    value_template: >-
+      '{{ value_json["DailyForecasts"][1]["AirAndPollen"][4]["Category"]  | capitalize }}'
+    icon: mdi:tree

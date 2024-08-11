@@ -1,0 +1,41 @@
+---
+# This file bootstraps the system
+# Have a look inside the Integrations and Entities folders for my config
+
+homeassistant:
+  name: Home
+  latitude: !secret latitude
+  longitude: !secret longitude
+  external_url: !secret external_url
+  internal_url: !secret internal_url
+
+  packages: !include_dir_named "packages"
+
+automation: !include automations.yaml
+automation manual: !include_dir_merge_list  automations/
+script: !include scripts.yaml
+script mine: !include_dir_merge_named scripts/
+
+  # Example configuration.yaml entry
+eufy:
+  username: !secret username
+  password: !secret password
+
+
+sensor:
+  - platform: mqtt_room
+    name: "Tracy's iPhone - BLE"
+    device_id: !secret tracy_device_id 
+    state_topic: espresense/devices/tracy
+    timeout: 5
+    away_timeout: 120
+
+device_tracker:
+  - platform: iphonedetect
+    consider_home: 60
+    scan_interval: 12
+    new_device_defaults:
+      track_new_devices: true
+    hosts:
+      rick_iphone_detect: 192.168.1.50
+      tracy_iphone_detect: 192.168.1.51

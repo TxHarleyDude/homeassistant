@@ -1,0 +1,36 @@
+######################################################################
+##  Shut it all down.  No one is here
+######################################################################
+
+- alias: "Away Mode - Turn Off Media Players"
+  mode: single
+  initial_state: "off"
+  trigger:
+    - platform: state
+      entity_id: group.residents
+      to: not_home
+
+  condition:
+    - condition: state
+      entity_id: group.residents
+      state: not_home
+
+  action:
+    - service: media_player.media_pause
+      entity_id: media_player.kodi_patio
+
+- id: "all_away_media_off"
+  alias: "All away media off"
+  initial_state: "on"
+  trigger:
+    - platform: state
+      entity_id: input_boolean.house_occupied
+      to: "off"
+  condition:
+    - condition: template 
+      value_template: >
+        {{ expand('group.media_players') | selectattr('state', 'eq', 'playing') | list | count > 0 }}
+  action:
+    service: media_player.media_pause
+    entity_id: group.media_players
+

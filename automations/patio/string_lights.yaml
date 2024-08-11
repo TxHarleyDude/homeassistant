@@ -1,0 +1,34 @@
+- alias: String lights on before Sunrise
+  trigger:
+    platform: sun
+    event: sunrise
+    offset: '-00:30:00'
+  action:
+    - service: switch.turn_on
+      entity_id: switch.patiolights
+
+- alias: String lights off After Sunrise
+  trigger:
+    platform: sun
+    event: sunrise
+    offset: '+00:30:00'
+  action:
+    - service: switch.turn_off
+      entity_id: switch.patiolights
+
+- alias: String lights on Before Sunset
+  trigger:
+    platform: sun
+    event: sunset
+    offset: '-00:30:00'
+  action:
+    - service: switch.turn_on
+      entity_id: switch.patiolights
+
+- alias: String lights off at 10:00pm
+  trigger:
+    - platform: time
+      at: '22:00:00'
+  action:
+    - service: switch.turn_off
+      entity_id: switch.patiolights

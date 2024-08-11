@@ -1,0 +1,94 @@
+input_boolean:
+  garbage_day:
+    name: Garbage Day
+    icon: mdi:delete
+
+  recycling_day:
+    name: Recycling Day
+    icon: mdi:recycle
+    
+sensor:
+  - platform: template
+    sensors:
+      days_till_garbage_pickup:
+        friendly_name: Days Till Garbage Pickup
+        unit_of_measurement: days
+        icon_template: "mdi:calendar-clock"
+        value_template: >-
+          {% set t = now() %}
+          {% set midnight = today_at() %}
+          {% set event = state_attr('calendar.garbage', 'start_time') | as_datetime | as_local %}
+          {% set delta = event - midnight %}
+          {{ delta.days }}
+
+  - platform: template
+    sensors:
+      days_till_recycling_pickup:
+        friendly_name: Days Till Recycling Pickup
+        unit_of_measurement: days
+        icon_template: "mdi:calendar-clock"
+        value_template: >-
+          {% set t = now() %}
+          {% set midnight = today_at() %}
+          {% set event = state_attr('calendar.recycling', 'start_time') | as_datetime | as_local %}
+          {% set delta = event - midnight %}
+          {{ delta.days }}
+          
+automation:
+  - id: garbage_day_event
+    alias: Garbage Day Event
+    mode: "single"
+    trigger:
+      - platform: calendar
+        event: start
+        entity_id: calendar.garbage
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.garbage_day
+      # will keep this here for now
+      - service: persistent_notification.create
+        data:
+          notification_id: garbage-day-alert
+          title: Garbage Notification
+          message: >-
+            {{ [ 
+                "Taking out the garbage – because even your garbage deserves a night on the town!.", 
+                "Trash day is like a weekly celebration for your garbage. They get a one-way ticket out of here!.",
+                "Trash day is your way of telling your garbage, 'It's not you, it's me – I need space.",
+                "Taking out the trash, turning 'waste' into 'space.' One bag at a time.",
+                "Trash day: the only day your garbage gets to see the outside world. Enjoy your brief escape!"
+                ] | random }}
+
+  - id: recycling_day_event
+    alias: Recycling Day Event
+    trigger:
+      - platform: calendar
+        event: start
+        entity_id: calendar.recycling
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.recycling_day
+
+  - id: reset_garbage_day
+    alias: Reset Garbage Day
+    trigger:
+      - platform: template
+        value_template: >-
+          {{ 6 == states('sensor.days_till_garbage_pickup') | int }}
+#      - platform: event
+#        event_type: automation_reloaded
+#      - platform: homeassistant
+#        event: start
+    condition:
+      - condition: state 
+        entity_id: input_boolean.garbage_day
+        state: "on"
+#      - condition: template 
+#        value_template: >-
+#          {{ 6 == states('sensor.days_till_garbage_pickup') | int }}
+
+    action:
+      - service: input_boolean.turn_off
+        entity_id: 
+          - input_boolean.garbage_day
+          - input_boolean.recycling_day

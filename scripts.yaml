@@ -1,0 +1,204 @@
+learn_commands:
+  sequence:
+  - service: remote.learn_command
+    target:
+      entity_id: remote.living_room
+    data:
+      device: Samsung TV
+      command: input_tv
+  mode: single
+  alias: Learn Commands
+  icon: mdi:remote
+samsung_tv_on:
+  alias: Samsung TV On
+  sequence:
+  - service: remote.send_command
+    target:
+      entity_id: remote.living_room
+    data:
+      command: power_on
+      device: Samsung TV
+  mode: single
+samsung_tv_off:
+  sequence:
+  - service: remote.send_command
+    target:
+      entity_id: remote.living_room
+    data:
+      device: Samsung TV
+      command: power_off
+  mode: single
+  alias: Samsung TV Off
+input_av1:
+  alias: Samsung TV Input AV1
+  sequence:
+  - service: remote.send_command
+    target:
+      entity_id: remote.living_room
+    data:
+      command: input_av1
+      device: Samsung TV
+  mode: single
+samsung_tv_hdmi_1:
+  sequence:
+  - service: remote.send_command
+    target:
+      entity_id: remote.living_room
+    data:
+      device: Samsung TV
+      command: input_hdmi1
+  mode: single
+  alias: Samsung TV HDMI 1
+samsung_tv_hdmi_2:
+  alias: Samsung TV HDMI 2
+  sequence:
+  - service: remote.send_command
+    target:
+      entity_id: remote.living_room
+    data:
+      device: Samsung TV
+      command: input_hdmi2
+  mode: single
+samsung_tv_hdmi_3:
+  alias: Samsung TV HDMI 3
+  sequence:
+  - service: remote.send_command
+    target:
+      entity_id: remote.living_room
+    data:
+      device: Samsung TV
+      command: input_hdmi3
+  mode: single
+samsung_tv_input_tv:
+  alias: Samsung TV Input TV
+  sequence:
+  - service: remote.send_command
+    target:
+      entity_id: remote.living_room
+    data:
+      device: Samsung TV
+      command: input_tv
+  mode: single
+kodi_change_profile:
+  alias: Kodi Get Profile
+  sequence:
+  - service: kodi.call_method
+    data:
+      method: Profiles.GetCurrentProfile
+    target:
+      entity_id: media_player.kodi_55bb9cd19766a793200ff5da7bbcb966
+  mode: single
+set_kodi_profile_patio:
+  alias: Set Kodi Profile Patio
+  sequence:
+  - service: kodi.call_method
+    data:
+      method: Profiles.LoadProfile
+      profile: Patio
+    target:
+      entity_id: media_player.kodi_55bb9cd19766a793200ff5da7bbcb966
+  mode: single
+set_kodi_profile_master_user:
+  alias: Set Kodi Profile Living Room
+  sequence:
+  - service: kodi.call_method
+    target:
+      entity_id: media_player.kodi_55bb9cd19766a793200ff5da7bbcb966
+    data:
+      method: Profiles.LoadProfile
+      profile: Master user
+  mode: single
+kodi_get_playlists:
+  alias: Kodi Get Playlists
+  sequence:
+  - service: kodi.call_method
+    target:
+      entity_id: media_player.kodi_55bb9cd19766a793200ff5da7bbcb966
+    data:
+      method: Playlist.GetPlaylists
+  mode: single
+  icon: mdi:playlist-edit
+kodi_load_good_stuff:
+  sequence:
+  - service: kodi.call_method
+    data:
+      method: Application.SetVolume
+      volume: 50
+    target:
+      area_id: office
+      device_id: da3997006f06f7dc6763adf9780464b6
+  - service: kodi.call_method
+    data:
+      method: Playlist.Clear
+      playlistid: 0
+    target:
+      area_id: office
+      device_id: da3997006f06f7dc6763adf9780464b6
+  - service: kodi.call_method
+    data:
+      method: Playlist.Add
+      playlistid: 0
+      item:
+        recursive: true
+        directory: special://profile/playlists/music/Good Stuff.m3u
+    target:
+      area_id: office
+      device_id: da3997006f06f7dc6763adf9780464b6
+  - service: kodi.call_method
+    data:
+      method: Player.Open
+      item:
+        playlistid: 0
+        position: 0
+    target:
+      area_id: office
+      device_id: da3997006f06f7dc6763adf9780464b6
+  - service: kodi.call_method
+    data:
+      method: Input.ButtonEvent
+      button: TAB
+      keymap: KB
+    target:
+      area_id: office
+      device_id: da3997006f06f7dc6763adf9780464b6
+  mode: single
+  alias: Kodi - Load Good Stuff - Office
+  icon: mdi:playlist-play
+tts_polly:
+  alias: TTS Polly
+  sequence:
+  - service: notify.alexa_media_rick_s_echo_dot
+    data:
+      message: Hello dumb ass
+  mode: single
+'1701465982996':
+  alias: New Script
+  sequence:
+  - service: homeassistant.update_entity
+    data: {}
+    target:
+      entity_id: sensor.air_filter_days_remaining
+open_back_gate_2:
+  alias: Open Back Gate
+  sequence:
+  - service: notify.alexa_media_rick_s_echo_dot
+    data:
+      message: Gate Opening
+  description: ''
+  icon: mdi:gate
+tts_message_queue_add_message:
+  alias: TTS Message Queue - Add Message
+  sequence:
+  - event: add_message
+    event_data:
+      message: Wait, I'm not crazy.
+      retain: true
+  description: ''
+tts_message_queue_remove_message:
+  alias: TTS Message Queue - Remove Message
+  sequence:
+  - event: remove_message
+    event_data:
+      message: Wait, I'm not crazy.
+      retain: true
+  description: ''

@@ -1,0 +1,46 @@
+kodi_play_default_patio:
+  sequence:
+    - service: kodi.call_method
+      data:
+        method: Application.SetVolume
+        volume: 50
+      target:
+        area_id: patio
+        device_id: d1d87563b9bccbb2afaf97081e6da19b
+    - service: kodi.call_method
+      data:
+        method: Playlist.Clear
+        playlistid: 0
+      target:
+        area_id: patio
+        device_id: d1d87563b9bccbb2afaf97081e6da19b
+    - service: kodi.call_method
+      data:
+        method: Playlist.Add
+        playlistid: 0
+        item:
+          recursive: true
+          directory: special://profile/playlists/music/Good Stuff.m3u
+      target:
+        area_id: patio
+        device_id: d1d87563b9bccbb2afaf97081e6da19b
+    - service: kodi.call_method
+      data:
+        method: Player.Open
+        item:
+          playlistid: 0
+          position: 0
+      target:
+        area_id: patio
+        device_id: d1d87563b9bccbb2afaf97081e6da19b
+    - service: kodi.call_method
+      data:
+        method: Input.ButtonEvent
+        button: TAB
+        keymap: KB
+      target:
+        area_id: patio
+        device_id: d1d87563b9bccbb2afaf97081e6da19b
+  mode: single
+  alias: Kodi - Load Good Stuff - Patio
+  icon: mdi:playlist-play

@@ -1,0 +1,26 @@
+## Need to correctly assign number of notifications to state
+- trigger:
+    - platform: event
+      event_type: add_message
+    - platform: event
+      event_type: remove_message
+    - platform: template
+      value_template: "{{ false }}"
+
+  sensor:
+    - unique_id: tts_message_queue
+      name: TTS Message Queue
+      device_class: timestamp
+      state: >
+        {{ now() }}
+      attributes:
+        notifications: >
+          {% set msgs = this.attributes.get('notifications', []) %}
+          {% if trigger.event.event_type == 'add_message' %}
+            {{ msgs + [{
+                "message": trigger.event.data.message,
+                "time_stamp": "Right now",
+                "retain": trigger.event.data.retain }] }}
+          {% else %}
+            {{ msgs | rejectattr('message', 'eq', trigger.event.data.message) | list }}
+          {% endif %}

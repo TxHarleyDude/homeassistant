@@ -1,0 +1,9 @@
+air_filter_lifespan:
+  name: Air Filter Lifespan
+  initial: 60
+  min: 0
+  max: 365
+  step: 1
+  mode: box
+  unit_of_measurement: days
+  icon: mdi:history

@@ -1,0 +1,28 @@
+automation:
+  - id: ricks_wifi_status
+    alias: "Rick's WiFi status"
+    initial_state: 'on'
+    trigger:
+      - platform: state
+        entity_id: sensor.ricks_iphone_ssid
+      - platform: homeassistant
+        event: start
+      - platform: event
+        event_type: automation_reloaded
+    action:
+      - choose:
+        - conditions:
+            - condition: template
+              value_template: "{{ 'SLYFOX' in states('sensor.ricks_iphone_ssid') }}"
+          sequence:
+            - service: mqtt.publish
+              data:
+                topic: location/ricks_wifi
+                payload: 'home'
+                retain: true
+        default:
+          - service: mqtt.publish
+            data:
+              topic: location/ricks_wifi
+              payload: 'not_home'
+              retain: true

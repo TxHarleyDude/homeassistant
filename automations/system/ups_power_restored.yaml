@@ -1,0 +1,38 @@
+#####
+# When main power restored, notify
+# Change input_boolean.ups_on_batteries to off
+#####
+
+- alias: UPS Power restored battery charging
+  id: ups_power_restored
+
+  trigger:
+    entity_id: sensor.ups_status
+    platform: state
+    from: On Battery Battery Discharging
+    to: Online Battery Charging
+
+  condition: []
+
+  action:
+    - service: notify.alert
+      data:
+        title: Power Restored
+        message: HA UPS Status - Online Battery Charging
+        data:
+          tag: ups_power_restored
+          notification_id: ups_power_restored
+          push:
+            badge: 1
+            sound: none
+            interruption-level: time-sensitive
+          presentation_options:
+            - alert
+            - badge
+          group: alerts
+          actions:
+            - title: "Pause Alert"
+              action: pause_alert_updates_available
+    - service: input_boolean.turn_off
+      data: {}
+      entity_id: input_boolean.ups_on_batteries

@@ -1,0 +1,90 @@
+
+template:
+  - binary_sensor:
+      - name: "Armed Night Mode"
+        state: >-
+          {{ is_state('alarm_control_panel.alarmo', 'armed_night') }}
+
+automation:
+  ##########################################################
+  ## Arm Night Mode at Bedtime
+  ##########################################################
+
+  - alias: Bedtime - Arm Night
+    id: "bedtime_alarm_night"
+
+    trigger:
+      - platform: state
+        entity_id: input_boolean.bedtime
+        to: "on"
+        for:
+          hours: 0
+          minutes: 2
+          seconds: 0
+
+    condition:
+      - condition: state
+        entity_id: group.residents
+        state: "home"
+
+    action:
+      - service: alarmo.arm
+        data:
+          entity_id: alarm_control_panel.alarmo
+          mode: night
+
+  ##########################################################
+  ## Arm Away - Everyone Has Left the House
+  ##########################################################
+
+  - alias: "Away Mode - Set Alarm"
+    id: "away_mode_set_Alarm"
+    mode: single
+
+    trigger:
+      - platform: state
+        entity_id: group.residents
+        to: not_home
+        for:
+          hours: 0
+          minutes: 2
+          seconds: 0
+
+    condition:
+      - condition: state
+        entity_id: group.residents
+        state: not_home
+
+    action:
+      - service: alarmo.arm
+        data:
+          entity_id: alarm_control_panel.alarmo
+          mode: away
+
+  ##########################################################
+  ## Disarm - Someone Has Arrived at the House
+  ##########################################################
+
+  - alias: "Someone Arrived Home - Disarm Alarm"
+    id: "someone_arrived_home_disarm_alarm"
+    mode: single
+
+    trigger:
+      - platform: state
+        entity_id: group.residents
+        from: not_home
+        to: home
+
+    condition:
+      - condition: state
+        entity_id: group.residents
+        state: home
+
+    action:
+      - service: alarm_control_panel.alarm_disarm
+        data:
+          entity_id: alarm_control_panel.alarmo
+      - service: notify.pushover
+        data:
+          message: The alarm has been disarmed by automation because someone is home.
+          title: Alarm Notification

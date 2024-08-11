@@ -1,0 +1,19 @@
+substitutions:
+  name: m5stack-atom-echo-0a0ab0
+  friendly_name: Office - Jarvis
+packages:
+#  m5stack.atom-echo-voice-assistant: github://esphome/firmware/voice-assistant/m5stack-atom-echo.yaml@main
+#  m5stack.atom-echo-voice-assistant: github://esphome/firmware/voice-assistant/m5stack-atom-echo.yaml@cd57ca6f951d44cc5bf61de124a15b349ef1f9a4
+  m5stack.atom-echo-voice-assistant: github://esphome/firmware/voice-assistant/m5stack-atom-echo.adopted.yaml@main
+esphome:
+  name: ${name}
+  name_add_mac_suffix: false
+  friendly_name: ${friendly_name}
+api:
+  encryption:
+    key: Pdflae4Z49YES9R5MvPgOrwFVZVXLN9+RPfP8fy2Mkw=
+
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password

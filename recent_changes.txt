@@ -1,0 +1,8 @@
+# Files disabled. Ready for deletion
+packages/binary_sensor.yaml.disabled                        disabled    07/29/2024
+entities/sensors/ac_filter_needs_changed.yaml.disabled      disabled    07/29/2024
+packages/alert.yaml.disabled                                disabled    07/30/2024
+packages/automations.yaml.disabled - moved back to config   disabled    07/30/2024
+
+# Recent changes
+Change sun elevation for dark_outside "on" from 4.0 to -4.0             07/30/2024

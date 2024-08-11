@@ -1,0 +1,27 @@
+- alias: Seedling Grow Lamp On
+  id: seedling_grow_lamp_on
+  trigger:
+    platform: sun
+    event: sunrise
+    offset: '-00:30:00'
+  condition:
+    - condition: state
+      entity_id: input_boolean.seeding_time
+      state: 'on'
+  action:
+    - service: switch.turn_on
+      entity_id: group.seedling_grow_lights
+
+- alias: Seedling Grow Lamp Off
+  id: seedling_grow_lamp_off
+  trigger:
+    platform: sun
+    event: sunset
+    offset: '-00:30:00'
+  condition:
+    - condition: state
+      entity_id: input_boolean.seeding_time
+      state: 'on'
+  action:
+    - service: switch.turn_off
+      entity_id: group.seedling_grow_lights

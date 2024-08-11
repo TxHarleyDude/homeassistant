@@ -1,0 +1,73 @@
+esphome:
+  name: gate-garage-module
+
+esp8266:
+  board: d1_mini
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+  password: "bd57ebc5e6e3a2e68930fbeecaead09f"
+  platform: esphome
+  
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Gate-Garage-Module"
+    password: "nduhUWwOsJLt"
+
+captive_portal:
+    
+# Example configuration entry
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO4
+      mode: INPUT_PULLUP
+      inverted: False
+    name: "Back Gate"
+    device_class: door
+    
+  - platform: gpio
+    pin:
+      number: GPIO5
+      mode: INPUT_PULLUP
+      inverted: False
+    name: "Garage Door"
+    device_class: garage_door
+    
+switch:
+  - platform: gpio
+    pin: GPIO12
+    id: relay_gate
+    name: "Back Gate Control"
+    icon: "mdi:gate"
+    on_turn_on:
+    - delay: 500ms
+    - switch.turn_off: relay_gate
+    
+  - platform: gpio
+    pin: GPIO13
+    id: relay_garage
+    name: "Garage Door Control"
+    icon: "mdi:garage"
+    on_turn_on:
+    - delay: 500ms
+    - switch.turn_off: relay_garage
+    
+sensor:
+  - platform: dht
+    model: DHT22_TYPE2
+    pin: D3
+    temperature:
+      name: "Garage Temperature"
+    humidity:
+      name: "Garage Humidity"
+    update_interval: 60s

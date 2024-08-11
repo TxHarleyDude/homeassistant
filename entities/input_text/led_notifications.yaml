@@ -1,0 +1,8 @@
+led_notification_current:
+  name: LED Notification Current
+
+led_notification_previous:
+  name: LED Notification Previous
+
+led_notification_change_to:
+  name: LED Noticiation Change To

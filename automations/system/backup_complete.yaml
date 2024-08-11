@@ -1,0 +1,27 @@
+- alias: "Google Drive Backup Complete"
+  id: google_drive_backup_complete
+
+  trigger:
+    - platform: state
+      entity_id: sensor.latest_backup
+
+  condition:
+    - condition: template
+      value_template: >
+        {{trigger.to_state.state != None and trigger.to_state.state != '' and trigger.to_state.state != 'unavailable'}}
+  action:
+    - service: notify.alert
+      data:
+        title: Backup Status
+        message: Backup completed {{ trigger.from_state.state }}
+        data:
+          tag: ha_backup_complete
+          notification_id: ha_backup_complete
+          push:
+            badge: 1
+            sound: none
+            interruption-level: time-sensitive
+          presentation_options:
+            - alert
+            - badge
+          group: alerts

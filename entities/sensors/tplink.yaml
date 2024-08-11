@@ -1,0 +1,29 @@
+#  INTEGER {up(1), down(2), testing(3), unknown(4), dormant(5), notPresent(6), lowerLayerDown(7) }
+- platform: snmp
+  name: "ER605 WAN Status"
+  host: 192.168.1.1
+  community: public
+  baseoid: 1.3.6.1.2.1.2.2.1.8.1025
+  version: '1'
+  accept_errors: true
+  value_template: >-
+    {% set status = {"status":["null","Up","Down","Testing","Unknown","Dormant","Not Present","Lower Layer Down"]} %}
+    {{ status.status[value | int] }}
+
+
+- platform: snmp
+  name: "ER605 Up Time"
+  host: 192.168.1.1
+  community: public
+  baseoid: 1.3.6.1.2.1.1.3.0
+  version: '1'
+  accept_errors: true
+  value_template: >-
+    {% set uptime = (value[:-2]) | int %}
+    {% set years = uptime // 31536000 %}
+    {% set months = (uptime % 31536000) // 2592000 %}
+    {% set days = (uptime % 2592000) // 86400 %}
+    {% set hours = (uptime % 86400) // 3600 %}
+    {% set minutes = (uptime % 3600) // 60 %}
+    {% set seconds = (uptime % 60) %}
+    {{ '%dy ' % years if years else '' }}{{ '%dm ' % months if months else '' }}{{ '%dd ' % days if days else '' }}{{ '%dh ' % hours if hours else '' }}{{ '%dm ' % minutes if minutes else '' }}{{ '%ds' % seconds if seconds else '' }}

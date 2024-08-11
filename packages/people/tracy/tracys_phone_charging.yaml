@@ -1,0 +1,62 @@
+input_boolean:
+  tracy_phone_plugged_in:
+    name: Tracy Phone Plugged In
+    icon: mdi:battery-charging
+
+sensor:
+  - platform: template
+    sensors:
+      tracys_iphone_home:
+        value_template: >-
+          {% if states('sensor.tracys_iphone_ssid') == "SLYFOX"  or states('sensor.tracys_iphone_ssid') == "SLYFOX_5" %}
+            Home
+          {% else %}
+            Away
+          {% endif %}
+        friendly_name: 'Tracys iPhone Home (SSID = SLYFOX)'
+
+automation:
+  # Tracy
+  #
+  # Tracy's phone is plugged in and charging
+  - id: "tracy_phone_plugged_in"
+    alias: "Tracy's phone is plugged in"
+    mode: "single"
+    trigger:
+      - platform: state
+        entity_id: sensor.tracys_iphone_battery_state
+        to: "Charging"
+      - platform: state
+        entity_id: sensor.tracys_iphone_battery_state
+        to: "Full"
+    condition:
+      - condition: state
+        entity_id: input_boolean.tracy_phone_plugged_in
+        state: "off"
+      - condition: or
+        conditions:
+          - condition: state
+            entity_id: sensor.tracys_iphone_battery_state
+            state: "Charging"
+          - condition: state
+            entity_id: sensor.tracys_iphone_battery_state
+            state: "Full"
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.tracy_phone_plugged_in
+
+  # Tracy's phone is no longer plugged in or charging
+  - id: "tracy_phone_unplugged"
+    alias: "Tracy's phone is unplugged"
+    mode: "single"
+    trigger:
+      - platform: state
+        entity_id: sensor.tracys_iphone_battery_state
+        to: "Not Charging"
+    condition:
+      - condition: state
+        entity_id: sensor.tracys_iphone_battery_state
+        state: "Not Charging"
+    action:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.tracy_phone_plugged_in

@@ -1,0 +1,10 @@
+device_tracker:
+  - name: "Rick's WiFi"
+    state_topic: 'location/ricks_wifi'
+    source_type: router
+    unique_id: "person_ricks_wifi"
+
+  - name: "Tracy's WiFi"
+    state_topic: 'location/tracys_wifi'
+    source_type: router
+    unique_id: "person_tracys_wifi"

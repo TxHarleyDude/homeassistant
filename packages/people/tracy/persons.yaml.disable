@@ -1,0 +1,7 @@
+person2_tracy:
+  name: Tracy's Presense
+  all: true
+  entities:
+    - device_tracker.tracy_iphone_detect
+    - device_tracker.tracys_iphone
+    - device_tracker.tracy_wifi

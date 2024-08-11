@@ -1,0 +1,16 @@
+- alias: "Pollen Notifications"
+  description: ''
+  trigger:
+    - platform: time
+      at: '07:00:00'
+  action:
+  - service: notify.pushover
+    data:
+      message: 'Weed:  {{ states.sensor.air_pollen_level_weed.state }}
+
+        Grass: {{ states.sensor.air_pollen_level_grass.state }}
+
+        Mold: {{ states.sensor.air_pollen_level_mold.state }}
+
+        Tree: {{ states.sensor.air_pollen_level_tree.state }}'
+      title: Pollen Levels
