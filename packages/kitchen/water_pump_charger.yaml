@@ -17,12 +17,12 @@ automation:
     mode: single
     trigger:
       - platform: state
-        entity_id: switch.0x00158d000a9844a1
+        entity_id: switch.water_pump_outlet
         to: 'on'
         for: '1:00:00'
     condition:
       - condition: state 
-        entity_id: switch.0x00158d000a9844a1
+        entity_id: switch.water_pump_outlet
         state: "on"
     action:
       - service: switch.turn_off

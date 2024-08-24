@@ -3,6 +3,23 @@ input_text:
     name: Latest Voice Announcement
     icon: mdi:bullhorn
 
+input_boolean:
+  voice_enabled:
+    name: Voice Enabled
+    icon: mdi:bullhorn
+    
+automation:
+  - id: bedtime_disable_voice
+    alias: Bedtime - Disable Voice
+    trigger:
+      - platform: state 
+        entity_id: input_boolean.bedtime
+        to: 'on'
+        for: '00:01:00'
+    action:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.voice_enabled
+        
 script:
   voice_announcement:
     alias: Voice Announcement

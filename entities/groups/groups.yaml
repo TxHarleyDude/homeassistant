@@ -11,7 +11,7 @@ residents:
 house_secure:
   name: House Secure
   entities:
-    - binary_sensor.back_gate
+#    - binary_sensor.back_gate
     - binary_sensor.garage_door
-    - binary_sensor.front_door_sensor
-    - binary_sensor.back_door_sensor
+    - binary_sensor.front_contact
+    - binary_sensor.back_contact

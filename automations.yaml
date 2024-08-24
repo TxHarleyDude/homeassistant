@@ -314,3 +314,18 @@
     data:
       message: Rick's alarm went off
   mode: single
+- id: '1723895553522'
+  alias: Test - Porch Alert
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.porch_alert_popup
+    to: 'on'
+  condition: []
+  action:
+  - action: notify.alexa_media_rick_s_echo_dot
+    metadata: {}
+    data:
+      message: Porch Alert
+  mode: single

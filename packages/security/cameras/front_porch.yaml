@@ -1,0 +1,15 @@
+input_boolean:
+  porch_alert:
+    name: Porch Alert
+
+binary_sensor:
+  - platform: template
+    sensors:
+      porch_alert_popup:
+        friendly_name: Porch Alert Popup
+        value_template: >
+          {% if states('input_boolean.porch_alert') == 'on' %}
+            {{ 'on' }}
+          {% else %}
+            {{ 'off' }}
+          {% endif %}

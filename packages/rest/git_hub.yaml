@@ -1,0 +1,10 @@
+rest:
+  resource: !secret github_url
+  headers:
+    Authorization: !secret github_token
+  scan_interval: 120
+  sensor:
+    unique_id: number_of_open_issues
+    name: Number of Open Issues
+    value_template: "{{ value_json[0].number }}"
+

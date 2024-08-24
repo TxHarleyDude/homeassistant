@@ -1,6 +1,0 @@
-resource: http://ip.jsontest.com
-scan_interval: 120
-sensor:
-  name: External IP
-  value_template: "{{ value_json.ip }}"
-
