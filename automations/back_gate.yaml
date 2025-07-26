@@ -5,7 +5,7 @@
 - alias: Open Back Gate
   id: open_back_gate
   trigger:
-    - platform: state
+    - trigger: state
       entity_id: input_boolean.home_button_triggered
       to: "on"
 
@@ -15,7 +15,7 @@
       state: "off"
 
   action:
-    - service: switch.turn_on
+    - action: switch.turn_on
       entity_id: switch.back_gate_control_2
 
 ##########################################################
@@ -26,7 +26,7 @@
   id: "home_triggered_reset_switch"
 
   trigger:
-    - platform: state
+    - trigger: state
       entity_id: input_boolean.home_button_triggered
       from: "off"
       to: "on"
@@ -36,5 +36,5 @@
         seconds: 5
 
   action:
-    - service: homeassistant.turn_off
+    - action: homeassistant.turn_off
       entity_id: input_boolean.home_button_triggered

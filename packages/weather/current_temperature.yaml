@@ -8,4 +8,4 @@ sensor:
         icon_template: "mdi:thermometer"
         device_class: temperature
         value_template: >-
-          {{ state_attr('weather.home_2', 'temperature') | int }} 
+          {{ state_attr('weather.home_2', 'temperature') | int }}

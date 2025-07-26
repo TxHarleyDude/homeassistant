@@ -1,0 +1,68 @@
+automation:
+  - id: "turn_off_led_lights_away"
+    alias: "Turn Off Office LED Lights Away"
+    initial_state: true
+    trigger:
+      # If House Occupied turn off
+      # then trigger the automation
+      - trigger: state
+        entity_id: 
+          input_boolean.house_occupied
+        to: "off"
+    condition:
+      condition: and
+      conditions:
+        # We're all away
+        - condition: state
+          entity_id: input_boolean.house_occupied
+          state: "off"
+    action:
+      - action: light.turn_off
+        entity_id: light.ham_desk_led_segment_1
+
+  - id: "turn_off_led_lights_night"
+    alias: "Turn Off Office LED Lights Night"
+    initial_state: true
+    trigger:
+      - trigger: time
+        at: "22:00:00"
+    action:
+      - action: light.turn_off
+        entity_id: light.ham_desk_led_segment_1
+
+  - id: "turn_on_led_lights_morning"
+    alias: "Turn On Office LED Lights Morning"
+    initial_state: true
+    trigger:
+      - trigger: state
+        entity_id: binary_sensor.office_contact
+        to: "on"
+    condition:
+      condition: and
+      conditions:
+        # - condition time between 0530 and 0830
+        - condition: time
+          after: "05:30:00"
+          before: "08:00:00"
+    action:
+      - action: light.turn_on
+        entity_id: light.ham_desk_led_segment_1
+
+  - id: "turn_on_led_lights_office_occupancy"
+    alias: "Turn On Office LED Lights When Occupancy Changes to On"
+    initial_state: true
+    trigger:
+      - trigger: state
+        entity_id: input_boolean.office_occupied
+        from: "off"
+        to: "on"
+    condition:
+      condition: and
+      conditions:
+        # - condition time between 0530 and 0830
+        - condition: time
+          after: "05:30:00"
+          before: "21:30:00"
+    action:
+      - action: light.turn_on
+        entity_id: light.ham_desk_led_segment_1

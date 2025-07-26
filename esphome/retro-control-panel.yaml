@@ -66,7 +66,7 @@ captive_portal:
 web_server:
 
 switch:
-  - platform: gpio
+  - trigger: gpio
     pin: GPIO4
     id: led_1
     name: "LED 1"
@@ -74,7 +74,7 @@ switch:
     restore_mode: RESTORE_DEFAULT_OFF
     
 binary_sensor:
-  - platform: gpio
+  - trigger: gpio
     pin: 
       number: GPIO5
       mode:
@@ -89,12 +89,12 @@ binary_sensor:
       - logger.log: Retro Box button pressed
       
 sensor:
-  - platform: wifi_signal
+  - trigger: wifi_signal
     name: "Retro Panel - WiFi Signal Sensor"
     update_interval: 60s
 
 text_sensor:
-  - platform: wifi_info
+  - trigger: wifi_info
     ip_address:
       name: ESP IP Address
       address_0:

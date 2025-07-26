@@ -19,10 +19,10 @@ automation:
     alias: Christmas Enabled
     mode: "single"
     trigger:
-      - platform: homeassistant
+      - trigger: homeassistant
         event: start
       # At 2am
-      - platform: time
+      - trigger: time
         at: "02:00:00"
     condition:
       # Between 12/1 - 1/07
@@ -36,17 +36,17 @@ automation:
         state: "off"
     action:
       # Turn the script to enable the booleans and automations
-      - service: input_boolean.turn_on
+      - action: input_boolean.turn_on
         entity_id: input_boolean.christmas_season_active
 
   - id: "christmas_disabled"
     alias: Christmas Disabled
     mode: "single"
     trigger:
-      - platform: homeassistant
+      - trigger: homeassistant
         event: start
       # At 2am
-      - platform: time
+      - trigger: time
         at: "02:00:00"
     condition:
       # Christmas Season Active boolean is ON
@@ -60,5 +60,5 @@ automation:
           {{ (d.month == 1 and d.day > 7) or (d.month > 2 and d.month < 12) }}
     action:
       # Turn the script to DISABLE the booleans and automations
-      - service: input_boolean.turn_off
+      - action: input_boolean.turn_off
         entity_id: input_boolean.christmas_season_active

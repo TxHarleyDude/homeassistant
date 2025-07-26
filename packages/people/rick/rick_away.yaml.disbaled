@@ -9,16 +9,16 @@ automation:
   alias: 'Person Rick Away'
   initial_state: 'on'
   trigger:
-    - platform: state
+    - trigger: state
       entity_id: device_tracker.ricks_iphone
-    - platform: state
+    - trigger: state
       entity_id: 
         - device_tracker.rick_iphone_detect
         - device_tracker.rick_wifi
       to: 'not_home'
-    - platform: event
+    - trigger: event
       event_type: automation_reloaded
-    - platform: homeassistant
+    - trigger: homeassistant
       event: start
   condition:
     # person has currently been home for more than time below
@@ -50,15 +50,15 @@ automation:
       - condition: template
         value_template: "{{ distance('device_tracker.ricks_iphone')|float > 0.6 }}"
   action:
-    - service: notify.pushover
+    - action: notify.pushover
       data:
         message: Rick is marked as away.
         title: Person Notification
-    - service: input_boolean.turn_off
+    - action: input_boolean.turn_off
       entity_id: input_boolean.person_rick_home
 
-  #  - service: script.turn_on
+  #  - action: script.turn_on
   #    data:
   #      entity_id: script.person1_away
-  #  - service: input_boolean.turn_off
+  #  - action: input_boolean.turn_off
   #    entity_id: input_boolean.person1_alarm_sounded

@@ -9,9 +9,9 @@
           state: "unavailable"
       # If Synology is unavailable, ask for the confirmation
       then:
-        - service: homeassistant.turn_off
+        - action: homeassistant.turn_off
           entity_id: input_boolean.diskstation_online
-        - service: notify.pushover
+        - action: notify.pushover
           data:
             message: Home Assistant started and Diskstation is down.
             title: Diskstation Notification
@@ -19,16 +19,16 @@
 - alias: "Diskstation Online Reboot HA"
   description: "If HA started up and Diskstation Not Online Reboot HA"
   trigger:
-    - platform: state
+    - trigger: state
       entity_id:
         - button.diskstation_shutdown
       from: "unavailable"
       to: null
   condition: []
   action:
-    - service: notify.pushover
+    - action: notify.pushover
       data:
         message: Diskstation Online HA Restarting
         title: Diskstation Alert
-    - service: homeassistant.restart
+    - action: homeassistant.restart
   mode: single

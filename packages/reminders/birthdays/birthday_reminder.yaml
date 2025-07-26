@@ -16,10 +16,10 @@ automation:
     mode: "single"
     trigger:
       # At 6:30 PM
-      - platform: time
+      - trigger: time
         at: "18:30:00"
       # At 8:05pm
-      - platform: time
+      - trigger: time
         at: "20:05:00"
     condition:
       # House is occupied
@@ -34,7 +34,7 @@ automation:
       - condition: time
         after: "17:00:00"
     action:
-      - service: script.general_notification
+      - action: script.general_notification
         data:
           message: "Tomorrow is {{states.calendar.birthdays.attributes.message}}"
           title: "Birthday Reminder"
@@ -47,10 +47,10 @@ automation:
     mode: "single"
     trigger:
       # At 7:30 am
-      - platform: time
+      - trigger: time
         at: "07:35:00"
       # At 5:15pm
-      - platform: time
+      - trigger: time
         at: "17:15:00"
     condition:
       # House is occupied
@@ -62,7 +62,7 @@ automation:
         entity_id: calendar.birthdays
         state: "on"
     action:
-      - service: script.general_notification
+      - action: script.general_notification
         data:
           message: "Today is {{states.calendar.birthdays.attributes.message}}"
           title: "Birthday Reminder"

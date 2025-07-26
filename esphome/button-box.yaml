@@ -35,7 +35,7 @@ wifi:
 captive_portal:
     
 sensor:
-  - platform: dht
+  - trigger: dht
     model: DHT22_TYPE2
     pin: GPIO2
     temperature:
@@ -45,7 +45,7 @@ sensor:
     update_interval: 60s
     
 switch:
-  - platform: gpio
+  - trigger: gpio
     pin: GPIO12
     id: led_1
     name: "LED 1"
@@ -53,7 +53,7 @@ switch:
     restore_mode: RESTORE_DEFAULT_OFF
     
 binary_sensor:
-  - platform: gpio
+  - trigger: gpio
     pin: 
       number: GPIO13
       mode:

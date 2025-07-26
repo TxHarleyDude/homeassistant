@@ -32,10 +32,12 @@ DEFAULT_NAME = "PirateWeather"
 DEFAULT_LANGUAGE = "en"
 DEFAULT_UNITS = "us"
 DEFAULT_SCAN_INTERVAL = 1200
+DEFAULT_ENDPOINT = "https://api.pirateweather.net"
 ATTRIBUTION = "Data provided by Pirate Weather GUI"
 MANUFACTURER = "PirateWeather"
 CONF_LANGUAGE = "language"
 CONF_UNITS = "units"
+CONF_ENDPOINT = "endpoint"
 CONFIG_FLOW_VERSION = 2
 ENTRY_NAME = "name"
 ENTRY_WEATHER_COORDINATOR = "weather_coordinator"
@@ -118,6 +120,7 @@ ALL_CONDITIONS = {
     "time": "Time",
     "fire_index": "Fire Index",
     "fire_index_max": "Fire Index Max",
+    "fire_risk_level": "Fire Risk Level",
     "smoke": "Smoke",
     "smoke_max": "Smoke Max",
     "liquid_accumulation": "Liquid Accumulation",
@@ -134,58 +137,69 @@ ALL_CONDITIONS = {
     "hrrr_18_48_update_time": "HRRR 18-48 Update Time",
     "gfs_update_time": "GFS Update Time",
     "gefs_update_time": "GEFS Update Time",
+    "current_day_liquid": "Current Day Liquid Accumulation",
+    "current_day_snow": "Current Day Snow Accumulation",
+    "current_day_ice": "Current Day Ice Accumulation",
 }
 
 LANGUAGES = [
-    "af",
-    "al",
     "ar",
     "az",
+    "be",
     "bg",
+    "bn",
+    "bs",
     "ca",
-    "cz",
+    "cs",
+    "cy",
     "da",
     "de",
     "el",
     "en",
+    "eo",
     "es",
-    "eu",
+    "et",
     "fa",
     "fi",
     "fr",
-    "gl",
+    "ga",
+    "gd",
     "he",
     "hi",
     "hr",
     "hu",
     "id",
+    "is",
     "it",
     "ja",
-    "kr",
-    "la",
-    "lt",
-    "mk",
+    "ka",
+    "kn",
+    "ko",
+    "kw",
+    "lv",
+    "ml",
+    "mr",
     "nl",
     "no",
+    "pa",
     "pl",
     "pt",
-    "pt_br",
     "ro",
     "ru",
-    "se",
     "sk",
     "sl",
-    "sp",
     "sr",
     "sv",
-    "th",
+    "ta",
+    "te",
+    "tet",
     "tr",
-    "ua",
     "uk",
+    "ur",
     "vi",
-    "zh_cn",
-    "zh_tw",
-    "zu",
+    "x-pig-latin",
+    "zh",
+    "zh-tw",
 ]
 
 WEATHER_SENSOR_TYPES: tuple[SensorEntityDescription, ...] = (

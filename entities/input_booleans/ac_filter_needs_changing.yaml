@@ -1,8 +1,0 @@
-#####
-# AC Filter Change Status
-# Set to True if needs to be changed
-#####
-
-ac_filter_needs_changing:
-  name: AC Filter Needs Changing
-  icon: mdi:air-filter

@@ -1,10 +1,10 @@
 ##### SENSOR CONFIG
 binary_sensor:
-  - platform: workday
+  - trigger: workday
     country: US
 
 sensor:
-  - platform: template
+  - trigger: template
     sensors:
       lovelace_tod:
         friendly_name: "Lovelace ToD"

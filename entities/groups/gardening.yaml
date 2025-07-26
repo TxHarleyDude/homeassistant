@@ -1,4 +1,0 @@
-seedling_grow_lights:
-  name: Seedling Grow Lights
-  entities:
-    - switch.multi_use_outlet

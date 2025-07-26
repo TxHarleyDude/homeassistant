@@ -13,8 +13,8 @@ sensor:
           {% else %}
             Away
           {% endif %}
-        friendly_name: 'Ricks iPhone Home (SSID = SLYFOX)'
-      
+        friendly_name: "Ricks iPhone Home (SSID = SLYFOX)"
+
 automation:
   # Rick
   #
@@ -23,10 +23,10 @@ automation:
     alias: "Rick's phone is plugged in"
     mode: "single"
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: sensor.ricks_iphone_battery_state
         to: "Charging"
-      - platform: state
+      - trigger: state
         entity_id: sensor.ricks_iphone_battery_state
         to: "Full"
     condition:
@@ -42,14 +42,14 @@ automation:
             entity_id: sensor.ricks_iphone_battery_state
             state: "Full"
     action:
-      - service: input_boolean.turn_on
+      - action: input_boolean.turn_on
         entity_id: input_boolean.rick_phone_plugged_in
 
   - id: "rick_phone_unplugged"
     alias: "Rick's phone is unplugged"
     mode: "single"
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: sensor.ricks_iphone_battery_state
         to: "Not Charging"
     condition:
@@ -57,5 +57,5 @@ automation:
         entity_id: sensor.ricks_iphone_battery_state
         state: "Not Charging"
     action:
-      - service: input_boolean.turn_off
+      - action: input_boolean.turn_off
         entity_id: input_boolean.rick_phone_plugged_in

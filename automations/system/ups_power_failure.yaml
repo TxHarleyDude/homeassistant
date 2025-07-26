@@ -8,13 +8,13 @@
 
   trigger:
     entity_id: sensor.ups_status
-    platform: state
+    trigger: state
     to: On Battery Battery Discharging
 
   condition: []
 
   action:
-    - service: notify.alert
+    - action: notify.alert
       data:
         title: Power Failure!
         message: HA UPS Status - On Battery Battery Discharging
@@ -32,6 +32,6 @@
           actions:
             - title: "Pause Alert"
               action: pause_alert_updates_available
-    - service: input_boolean.turn_on
+    - action: input_boolean.turn_on
       data: {}
       entity_id: input_boolean.ups_on_batteries

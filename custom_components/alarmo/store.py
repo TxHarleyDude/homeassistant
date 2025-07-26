@@ -6,17 +6,9 @@ from typing import MutableMapping, cast
 from homeassistant.core import (callback, HomeAssistant)
 from homeassistant.helpers.storage import Store
 
-from homeassistant.const import (
-    STATE_ALARM_ARMED_AWAY,
-    STATE_ALARM_ARMED_HOME,
-    STATE_ALARM_ARMED_NIGHT,
-    STATE_ALARM_ARMED_CUSTOM_BYPASS,
-    STATE_ALARM_ARMED_VACATION
-)
-
 from homeassistant.components.alarm_control_panel import CodeFormat
 
-from .const import DOMAIN
+from . import const
 
 from .sensors import (
     SENSOR_TYPE_OTHER,
@@ -26,8 +18,8 @@ from .helpers import omit
 
 _LOGGER = logging.getLogger(__name__)
 
-DATA_REGISTRY = f"{DOMAIN}_storage"
-STORAGE_KEY = f"{DOMAIN}.storage"
+DATA_REGISTRY = f"{const.DOMAIN}_storage"
+STORAGE_KEY = f"{const.DOMAIN}.storage"
 STORAGE_VERSION_MAJOR = 6
 STORAGE_VERSION_MINOR = 3
 SAVE_DELAY = 10
@@ -71,11 +63,11 @@ class AreaEntry:
     area_id = attr.ib(type=str, default=None)
     name = attr.ib(type=str, default=None)
     modes = attr.ib(type=[str, ModeEntry], default={
-        STATE_ALARM_ARMED_AWAY: ModeEntry(),
-        STATE_ALARM_ARMED_HOME: ModeEntry(),
-        STATE_ALARM_ARMED_NIGHT: ModeEntry(),
-        STATE_ALARM_ARMED_CUSTOM_BYPASS: ModeEntry(),
-        STATE_ALARM_ARMED_VACATION: ModeEntry()
+        const.CONF_ALARM_ARMED_AWAY: ModeEntry(),
+        const.CONF_ALARM_ARMED_HOME: ModeEntry(),
+        const.CONF_ALARM_ARMED_NIGHT: ModeEntry(),
+        const.CONF_ALARM_ARMED_CUSTOM_BYPASS: ModeEntry(),
+        const.CONF_ALARM_ARMED_VACATION: ModeEntry()
     })
 
 
@@ -88,6 +80,7 @@ class Config:
     code_disarm_required = attr.ib(type=bool, default=False)
     code_format = attr.ib(type=str, default=CodeFormat.NUMBER)
     disarm_after_trigger = attr.ib(type=bool, default=False)
+    ignore_blocking_sensors_after_trigger = attr.ib(type=bool, default=False)
     master = attr.ib(type=MasterConfig, default=MasterConfig())
     mqtt = attr.ib(type=MqttConfig, default=MqttConfig())
 
@@ -325,7 +318,8 @@ class AlarmoStorage:
                 code_mode_change_required=data["config"]["code_mode_change_required"],
                 code_disarm_required=data["config"]["code_disarm_required"],
                 code_format=data["config"]["code_format"],
-                disarm_after_trigger=data["config"]["disarm_after_trigger"]
+                disarm_after_trigger=data["config"]["disarm_after_trigger"],
+                ignore_blocking_sensors_after_trigger=data["config"].get("ignore_blocking_sensors_after_trigger", False)
             )
 
             if "mqtt" in data["config"]:
@@ -385,7 +379,7 @@ class AlarmoStorage:
         self.async_create_area({
             "name": "Alarmo",
             "modes": {
-                STATE_ALARM_ARMED_AWAY: attr.asdict(
+                const.CONF_ALARM_ARMED_AWAY: attr.asdict(
                     ModeEntry(
                         enabled=True,
                         exit_time=60,
@@ -393,7 +387,7 @@ class AlarmoStorage:
                         trigger_time=1800
                     )
                 ),
-                STATE_ALARM_ARMED_HOME: attr.asdict(
+                const.CONF_ALARM_ARMED_HOME: attr.asdict(
                     ModeEntry(
                         enabled=True,
                         trigger_time=1800

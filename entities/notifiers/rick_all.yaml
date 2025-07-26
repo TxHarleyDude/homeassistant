@@ -1,6 +1,0 @@
----
-# https://www.home-assistant.io/integrations/notify.group/
-platform: group
-name: rick_all
-services:
-  - service: mobile_app_ricks_iphone

@@ -1,3 +1,8 @@
+timer:
+  garage_door_closed:
+    duration: "00:00:30"
+    name: Garage Door Closed
+
 automation:
   - id: "garage_doors_close_when_home"
     alias: "Garage doors close when home"
@@ -5,25 +10,25 @@ automation:
     trigger:
       # If any doors have been open for more than 30 mins
       # It gets dark outside
-      - platform: state
+      - trigger: state
         entity_id: input_boolean.dark_outside
         to: "on"
     condition:
       - condition: state
         entity_id: input_boolean.dark_outside
         state: "on"
-      - condition: state 
+      - condition: state
         entity_id: binary_sensor.garage_door
         state: "on"
     action:
       # Call the announcement engine
-#      - service: script.voice_announcement
-#        data:
-#          media_players: auto
-#          sound: "police-whistle"
-#          speech_message: "Garage door has been open for a while but nobody is around so I'm automaticallly closing."
+      #      - action: script.voice_announcement
+      #        data:
+      #          media_players: auto
+      #          sound: "police-whistle"
+      #          speech_message: "Garage door has been open for a while but nobody is around so I'm automaticallly closing."
       # Notification for logging
-      - service: script.general_notification
+      - action: script.general_notification
         data:
           title: "Garage Doors Open!"
           message: "Garage door has been open for a while but nobody is around so I'm automaticallly closing."
@@ -31,5 +36,99 @@ automation:
           priority: "time-sensitive"
           tag: "garage-doors-open-home"
       # Close the garage door
-      - service: switch.turn_on
+      - action: switch.turn_on
         entity_id: switch.garage_door_control
+      - action: timer.start
+        entity_id: timer.garage_door_closed
+
+  #################################################################
+  ## Garage - Lets make sure garage closed from another automation
+  #################################################################
+
+  - id: garage_double_check_closed
+    alias: Garage - Double Check Closed
+    trigger:
+      - trigger: event
+        event_type: timer.finished
+        event_data:
+          entity_id: timer.garage_door_closed
+
+    condition:
+      - condition: state
+        entity_id: binary_sensor.garage_door
+        state: "on"
+
+    action:
+      - action: script.general_notification
+        data:
+          title: "Garage Door Failed to Close!"
+          message: "The garage door failed to close after an automation attempted to close it"
+          devices: "all"
+          priority: "time-sensitive"
+          tag: "garage-doors-open-home"
+      # restart the time
+      - action: timer.start
+        entity_id: timer.garage_door_closed
+
+  ##########################################################
+  ## Garage Door - Close
+  ##########################################################
+
+  - id: "bedtime_garage_door"
+    alias: Bedtime - Garage Door
+
+    trigger:
+      - trigger: state
+        entity_id: input_boolean.bedtime
+        to: "on"
+      - trigger: state
+        entity_id: group.residents
+        to: not_home
+        for: "0:02:00"
+
+    condition:
+      - condition: state
+        entity_id: binary_sensor.garage_door
+        state: "on"
+
+    action:
+      - action: switch.turn_on
+        entity_id:
+          - switch.garage_door_control
+      - action: homeassistant.turn_on
+        entity_id:
+          - input_boolean.garage_closing
+
+  ##############################################################
+  ## Garage - Garage door closed so reset Garage Closing switch
+  ##############################################################
+
+  - id: garage_door_closed
+    alias: Garage - Door Closed
+    trigger:
+      - trigger: state
+        entity_id: binary_sensor.garage_door
+        from: "on"
+        to: "off"
+
+    action:
+      - action: homeassistant.turn_off
+        entity_id: input_boolean.garage_closing
+      - action: homeassistant.turn_off
+        entity_id: input_boolean.garage_open
+
+  ##############################################################
+  ## Garage - Garage door open
+  ##############################################################
+
+  - id: garage_door_open
+    alias: Garage - Door Open
+    trigger:
+      - trigger: state
+        entity_id: binary_sensor.garage_door
+        from: "off"
+        to: "on"
+
+    action:
+      - action: homeassistant.turn_on
+        entity_id: input_boolean.garage_open

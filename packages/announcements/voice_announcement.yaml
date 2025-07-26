@@ -7,19 +7,19 @@ input_boolean:
   voice_enabled:
     name: Voice Enabled
     icon: mdi:bullhorn
-    
+
 automation:
   - id: bedtime_disable_voice
     alias: Bedtime - Disable Voice
     trigger:
-      - platform: state 
+      - trigger: state
         entity_id: input_boolean.bedtime
-        to: 'on'
-        for: '00:01:00'
+        to: "on"
+        for: "00:01:00"
     action:
-      - service: input_boolean.turn_off
+      - action: input_boolean.turn_off
         entity_id: input_boolean.voice_enabled
-        
+
 script:
   voice_announcement:
     alias: Voice Announcement
@@ -27,7 +27,7 @@ script:
 
     sequence:
       # Save the latest message
-      - service: input_text.set_value
+      - action: input_text.set_value
         entity_id: input_text.latest_voice_announcement
         data:
           value: "Hello World"

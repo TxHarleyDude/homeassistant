@@ -1,4 +1,3 @@
-
 template:
   - binary_sensor:
       - name: "Armed Night Mode"
@@ -14,7 +13,7 @@ automation:
     id: "bedtime_alarm_night"
 
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: input_boolean.bedtime
         to: "on"
         for:
@@ -28,7 +27,7 @@ automation:
         state: "home"
 
     action:
-      - service: alarmo.arm
+      - action: alarmo.arm
         data:
           entity_id: alarm_control_panel.alarmo
           mode: night
@@ -42,7 +41,7 @@ automation:
     mode: single
 
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: group.residents
         to: not_home
         for:
@@ -56,7 +55,7 @@ automation:
         state: not_home
 
     action:
-      - service: alarmo.arm
+      - action: alarmo.arm
         data:
           entity_id: alarm_control_panel.alarmo
           mode: away
@@ -70,7 +69,7 @@ automation:
     mode: single
 
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: group.residents
         from: not_home
         to: home
@@ -81,10 +80,17 @@ automation:
         state: home
 
     action:
-      - service: alarm_control_panel.alarm_disarm
+      - action: alarm_control_panel.alarm_disarm
         data:
           entity_id: alarm_control_panel.alarmo
-      - service: notify.pushover
+      - action: script.general_notification
         data:
-          message: The alarm has been disarmed by automation because someone is home.
-          title: Alarm Notification
+          title: "Alarm Notification"
+          message: "The alarm has been disarmed by automation because someone is home."
+          devices: "all"
+          priority: "time-sensitive"
+          tag: "alarm_notification_disarmed"
+#      - action: notify.pushover
+#        data:
+#          message: The alarm has been disarmed by automation because someone is home.
+#          title: Alarm Notification

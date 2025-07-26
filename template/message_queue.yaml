@@ -1,10 +1,10 @@
 ## Need to correctly assign number of notifications to state
 - trigger:
-    - platform: event
+    - trigger: event
       event_type: add_message
-    - platform: event
+    - trigger: event
       event_type: remove_message
-    - platform: template
+    - trigger: template
       value_template: "{{ false }}"
 
   sensor:

@@ -1,0 +1,65 @@
+template:
+  - sensor:
+    - name: "Updates Available"
+      state: >
+        {{ states | selectattr('entity_id', 'match', 'update\..*') 
+                  | selectattr('state', 'eq', 'on') 
+                  | list 
+                  | count }}
+      icon: mdi:update
+  - binary_sensor:
+      - name: "Addon update available"
+        state: >
+          {{ expand(integration_entities('hassio'))
+            | selectattr('domain','equalto','update')
+            | rejectattr('entity_id','search','home_assistant_o')
+            | rejectattr('entity_id','search','home_assistant_c')
+            | rejectattr('entity_id','search','home_assistant_s')
+            | selectattr('state','equalto','on')
+            | list
+            | count
+          }}
+      - name: "HAS update available"
+        state: >
+          {{ expand(integration_entities('hassio'))
+            | selectattr('domain','equalto','update')
+            | selectattr('entity_id','search','home_assistant')
+            | rejectattr('entity_id','search','google_drive_backup')
+            | selectattr('state','equalto','on')
+            | list
+            | count
+          }} 
+      - name: "HACS update available"
+        state: >
+          {{ expand(integration_entities('hacs'))
+            | selectattr('domain','equalto','update')
+            | selectattr('state','equalto','on')
+            | list
+            | count
+          }}
+      - name: "MQTT update available"
+        state: >
+          {{ expand(integration_entities('mqtt'))
+            | selectattr('domain','equalto','update')
+            | selectattr('state','equalto','on')
+            | list
+            | count
+          }}
+      - name: "ESPHome update available"
+        state: >
+          {{ states | selectattr('entity_id', 'match', 'update') 
+            | selectattr('attributes.device_class','equalto','firmware')
+            | selectattr('attributes.title','equalto','ESPHome')
+            | list
+            | count
+          }}
+
+group:
+  updates_available:
+    name: Updates Available
+    all: false
+    entities:
+      - binary_sensor.addon_update_available
+      - binary_sensor.has_update_available
+      - binary_sensor.hacs_update_available
+      # - binary_sensor.esphome_update_available

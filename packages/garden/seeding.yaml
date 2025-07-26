@@ -1,0 +1,38 @@
+input_boolean:
+  seeding_time:
+    name: Seeding Time
+    icon: mdi:sprout
+group:
+  seedling_grow_lights:
+    name: Seedling Grow Lights
+    entities:
+      - switch.plant_light
+
+automation:
+  - id: plant_light_on
+    alias: Plant Light On
+    triggers:
+      - trigger: sun
+        event: sunrise
+        offset: '-00:30:00'
+    condition:
+      - condition: state
+        entity_id: input_boolean.seeding_time
+        state: 'on'
+    action:
+      - action: switch.turn_on
+        entity_id: group.seedling_grow_lights
+
+  - id: plant_light_off
+    alias: Plant Light Off
+    triggers:
+      - trigger: sun
+        event: sunset
+        offset: '-00:30:00'
+    condition:
+      - condition: state
+        entity_id: input_boolean.seeding_time
+        state: 'on'
+    action:
+      - action: switch.turn_off
+        entity_id: group.seedling_grow_lights

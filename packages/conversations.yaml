@@ -11,19 +11,19 @@ intent_script:
   backgate:
     speech:
       text: "I will"
-      
+
   notifications:
     speech:
       text: "Let me check"
       # setup action to run script to check number of notifications
     action:
-      - service: script.check_for_notifications
-  
+      - action: script.check_for_notifications
+
   bedtime:
     speech:
       text: ""
     action:
-      - service: notify.alexa_media_rick_s_echo_dot
+      - action: notify.alexa_media_rick_s_echo_dot
         data:
           message: Bedtime activated
 
@@ -38,10 +38,10 @@ automation:
   - alias: Conversation - Set Bedtime Mode
     description: "Voice command to set bedtime mode"
     trigger:
-      - platform: conversation
+      - trigger: conversation
         command: Set bedtime mode
     action:
-      - service: homeassistant.turn_on
+      - action: homeassistant.turn_on
         entity_id: input_boolean.bedtime
     mode: single
 
@@ -51,12 +51,12 @@ automation:
   - alias: Conversation - Open/Close Back Gate
     description: "Voice command to open/close gate"
     trigger:
-      - platform: conversation
+      - trigger: conversation
         command: Open back gate
-      - platform: conversation
+      - trigger: conversation
         command: Close back gate
     action:
-      - service: notify.alexa_media_rick_s_echo_dot
+      - action: notify.alexa_media_rick_s_echo_dot
         data:
           message: Gate Opening
     mode: single
@@ -67,10 +67,10 @@ automation:
   - alias: Conversation - Close Garage Door
     description: "Voice command to close garage door"
     trigger:
-      - platform: conversation
+      - trigger: conversation
         command: Close garage door
     action:
-      - service: switch.turn_on
+      - action: switch.turn_on
         entity_id: switch.garage_door_control
     mode: single
 
@@ -80,10 +80,10 @@ automation:
   - alias: Conversation - Set media mode
     description: "Voice command to set media mode"
     trigger:
-      - platform: conversation
+      - trigger: conversation
         command: Set media mode
     action:
-      - service: light.turn_on
+      - action: light.turn_on
         data:
           effect: "Rainbow"
         target:

@@ -1,9 +1,0 @@
-# Basic configuration.yaml entry
-binary_sensor:
-  - platform: rpi_gpio
-    sensors:
-      - port: 11
-        name: "PIR Office"
-      - port: 12
-        name: "PIR Bedroom"
-        

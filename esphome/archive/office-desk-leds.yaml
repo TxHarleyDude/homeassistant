@@ -1,0 +1,31 @@
+esphome:
+  name: office-desk-leds
+  friendly_name: Office Desk LEDs
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "/KcuDkTyzweOSboFPqY3cU3LAJHBMDkn4Upr4BdoZXw="
+
+ota:
+  - trigger: esphome
+    password: "5922a2432ff1f3bd7109fb095afcea0a"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Office-Desk-Leds"
+    password: "dNernbw7aUNn"
+
+captive_portal:

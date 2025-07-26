@@ -233,6 +233,48 @@ SENSOR_TYPES: dict[str, PirateWeatherSensorEntityDescription] = {
         icon="mdi:weather-snowy-rainy",
         forecast_mode=["hourly", "daily"],
     ),
+    "current_day_liquid": PirateWeatherSensorEntityDescription(
+        key="current_day_liquid",
+        name="Current Day Liquid Accumulation",
+        device_class=SensorDeviceClass.PRECIPITATION,
+        state_class=SensorStateClass.MEASUREMENT,
+        si_unit=UnitOfLength.CENTIMETERS,
+        us_unit=UnitOfLength.INCHES,
+        ca_unit=UnitOfLength.CENTIMETERS,
+        uk_unit=UnitOfLength.CENTIMETERS,
+        uk2_unit=UnitOfLength.CENTIMETERS,
+        suggested_display_precision=4,
+        icon="mdi:weather-rainy",
+        forecast_mode=["currently"],
+    ),
+    "current_day_snow": PirateWeatherSensorEntityDescription(
+        key="current_day_snow",
+        name="Current Day Snow Accumulation",
+        device_class=SensorDeviceClass.PRECIPITATION,
+        state_class=SensorStateClass.MEASUREMENT,
+        si_unit=UnitOfLength.CENTIMETERS,
+        us_unit=UnitOfLength.INCHES,
+        ca_unit=UnitOfLength.CENTIMETERS,
+        uk_unit=UnitOfLength.CENTIMETERS,
+        uk2_unit=UnitOfLength.CENTIMETERS,
+        suggested_display_precision=4,
+        icon="mdi:weather-snowy",
+        forecast_mode=["currently"],
+    ),
+    "current_day_ice": PirateWeatherSensorEntityDescription(
+        key="current_day_ice",
+        name="Current Day Ice Accumulation",
+        device_class=SensorDeviceClass.PRECIPITATION,
+        state_class=SensorStateClass.MEASUREMENT,
+        si_unit=UnitOfLength.CENTIMETERS,
+        us_unit=UnitOfLength.INCHES,
+        ca_unit=UnitOfLength.CENTIMETERS,
+        uk_unit=UnitOfLength.CENTIMETERS,
+        uk2_unit=UnitOfLength.CENTIMETERS,
+        suggested_display_precision=4,
+        icon="mdi:weather-snowy-rainy",
+        forecast_mode=["currently"],
+    ),
     "temperature": PirateWeatherSensorEntityDescription(
         key="temperature",
         name="Temperature",
@@ -384,6 +426,14 @@ SENSOR_TYPES: dict[str, PirateWeatherSensorEntityDescription] = {
         suggested_display_precision=2,
         icon="mdi:fire",
         forecast_mode=["currently", "hourly"],
+    ),
+    "fire_risk_level": PirateWeatherSensorEntityDescription(
+        key="fire_risk_level",
+        name="Fire Risk Level",
+        device_class=SensorDeviceClass.ENUM,
+        icon="mdi:fire",
+        forecast_mode=["currently", "hourly", "daily"],
+        options=["Extreme", "Very High", "High", "Moderate", "Low", "N/A"],
     ),
     "fire_index_max": PirateWeatherSensorEntityDescription(
         key="fire_index_max",
@@ -772,7 +822,7 @@ LANGUAGE_CODES = [
     "zh-tw",
 ]
 
-ALLOWED_UNITS = ["auto", "si", "us", "ca", "uk", "uk2"]
+ALLOWED_UNITS = ["si", "us", "ca", "uk", "uk2"]
 
 ALERTS_ATTRS = ["time", "description", "expires", "severity", "uri", "regions", "title"]
 
@@ -1076,12 +1126,14 @@ class PirateWeatherSensor(SensorEntity):
             "gfs_update_time",
             "gefs_update_time",
         ]:
-            model_time_string = self._weather_coordinator.data.json["flags"][
-                "sourceTimes"
-            ][self.entity_description.key]
-            native_val = datetime.datetime.strptime(
-                model_time_string[0:-1], "%Y-%m-%d %H"
-            ).replace(tzinfo=datetime.UTC)
+            try:
+                flags = self._weather_coordinator.data.flags()
+                model_time_string = flags.sourceTimes[self.entity_description.key]
+                native_val = datetime.datetime.strptime(
+                    model_time_string[0:-1], "%Y-%m-%d %H"
+                ).replace(tzinfo=datetime.UTC)
+            except KeyError:
+                native_val = None
 
         elif self.type == "minutely_summary":
             native_val = getattr(
@@ -1122,8 +1174,17 @@ class PirateWeatherSensor(SensorEntity):
 
         If the sensor type is unknown, the current state is returned.
         """
-        lookup_type = convert_to_camel(self.type)
-        state = data.get(lookup_type)
+
+        if self.type == "fire_risk_level":
+            if self.forecast_hour is not None:
+                state = data.get("fireIndex")
+            elif self.forecast_day is not None:
+                state = data.get("fireIndexMax")
+            else:
+                state = data.get("fireIndex")
+        else:
+            lookup_type = convert_to_camel(self.type)
+            state = data.get(lookup_type)
 
         if state is None:
             return state
@@ -1158,15 +1219,18 @@ class PirateWeatherSensor(SensorEntity):
             ]:
                 state = round(state * 9 / 5) + 32
 
-        # Precipitation Accumilation (mm in SI) to inches
+        # Precipitation Accumulation (cm in SI) to inches
         if self.requestUnits in ["us"]:
             if self.type in [
                 "precip_accumulation",
                 "liquid_accumulation",
                 "snow_accumulation",
                 "ice_accumulation",
+                "current_day_liquid",
+                "current_day_snow",
+                "current_day_ice",
             ]:
-                state = state * 0.0393701
+                state = state * 0.3937008
 
         # Precipitation Intensity (mm/h in SI) to inches
         if self.requestUnits in ["us"]:
@@ -1211,6 +1275,8 @@ class PirateWeatherSensor(SensorEntity):
         ]:
             outState = datetime.datetime.fromtimestamp(state, datetime.UTC)
 
+        elif self.type == "fire_risk_level":
+            outState = fire_index(state)
         elif self.type in [
             "dew_point",
             "temperature",
@@ -1247,6 +1313,9 @@ class PirateWeatherSensor(SensorEntity):
             "ice_accumulation",
             "precip_intensity",
             "precip_intensity_max",
+            "current_day_liquid",
+            "current_day_snow",
+            "current_day_ice",
         ]:
             outState = round(state, roundingPrecip)
 
@@ -1274,3 +1343,22 @@ def convert_to_camel(data):
     components = data.split("_")
     capital_components = "".join(x.title() for x in components[1:])
     return f"{components[0]}{capital_components}"
+
+
+def fire_index(fire_index):
+    """Convert numeric fire index to a textual value."""
+
+    if fire_index == -999:
+        outState = "N/A"
+    elif fire_index >= 30:
+        outState = "Extreme"
+    elif fire_index >= 20:
+        outState = "Very High"
+    elif fire_index >= 10:
+        outState = "High"
+    elif fire_index >= 5:
+        outState = "Moderate"
+    else:
+        outState = "Low"
+
+    return outState

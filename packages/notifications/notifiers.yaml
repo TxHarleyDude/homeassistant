@@ -1,0 +1,15 @@
+notify: 
+  - platform: group
+    name: family_all
+    services:
+      - action: mobile_app_ricks_iphone
+      - action: mobile_app_tracys_iphone
+  - platform: group
+    name: rick_all
+    services:
+      - action: mobile_app_ricks_iphone
+  - platform: group
+    name: tracy_all
+    services:
+      - action: mobile_app_tracys_iphone
+        

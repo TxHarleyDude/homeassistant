@@ -14,21 +14,12 @@ from homeassistant.const import (
     ATTR_SERVICE,
     CONF_SERVICE_DATA,
     ATTR_STATE,
-    STATE_ALARM_ARMED_AWAY,
-    STATE_ALARM_ARMED_HOME,
-    STATE_ALARM_ARMED_NIGHT,
-    STATE_ALARM_ARMED_CUSTOM_BYPASS,
-    STATE_ALARM_ARMED_VACATION,
-    STATE_ALARM_DISARMED,
-    STATE_ALARM_TRIGGERED,
-    STATE_ALARM_PENDING,
-    STATE_ALARM_DISARMING,
-    STATE_ALARM_ARMING,
 )
 
 from homeassistant.components.alarm_control_panel import (
     CodeFormat,
     ATTR_CODE_ARM_REQUIRED,
+    AlarmControlPanelState
 )
 from homeassistant.components.websocket_api import (decorators, async_register_command)
 
@@ -106,6 +97,7 @@ class AlarmoConfigView(HomeAssistantView):
             {
                 vol.Optional(ATTR_CODE_ARM_REQUIRED): cv.boolean,
                 vol.Optional(const.ATTR_CODE_DISARM_REQUIRED): cv.boolean,
+                vol.Optional(const.ATTR_IGNORE_BLOCKING_SENSORS_AFTER_TRIGGER): cv.boolean,
                 vol.Optional(const.ATTR_CODE_MODE_CHANGE_REQUIRED): cv.boolean,
                 vol.Optional(ATTR_CODE_FORMAT): vol.In(
                     [CodeFormat.NUMBER, CodeFormat.TEXT]
@@ -116,16 +108,16 @@ class AlarmoConfigView(HomeAssistantView):
                     vol.Required(const.ATTR_ENABLED): cv.boolean,
                     vol.Required(CONF_STATE_TOPIC): cv.string,
                     vol.Optional(const.ATTR_STATE_PAYLOAD): vol.Schema({
-                        vol.Optional(STATE_ALARM_DISARMED): cv.string,
-                        vol.Optional(STATE_ALARM_ARMED_HOME): cv.string,
-                        vol.Optional(STATE_ALARM_ARMED_AWAY): cv.string,
-                        vol.Optional(STATE_ALARM_ARMED_NIGHT): cv.string,
-                        vol.Optional(STATE_ALARM_ARMED_CUSTOM_BYPASS): cv.string,
-                        vol.Optional(STATE_ALARM_ARMED_VACATION): cv.string,
-                        vol.Optional(STATE_ALARM_PENDING): cv.string,
-                        vol.Optional(STATE_ALARM_ARMING): cv.string,
-                        vol.Optional(STATE_ALARM_DISARMING): cv.string,
-                        vol.Optional(STATE_ALARM_TRIGGERED): cv.string
+                        vol.Optional(const.CONF_ALARM_DISARMED): cv.string,
+                        vol.Optional(const.CONF_ALARM_ARMED_HOME): cv.string,
+                        vol.Optional(const.CONF_ALARM_ARMED_AWAY): cv.string,
+                        vol.Optional(const.CONF_ALARM_ARMED_NIGHT): cv.string,
+                        vol.Optional(const.CONF_ALARM_ARMED_CUSTOM_BYPASS): cv.string,
+                        vol.Optional(const.CONF_ALARM_ARMED_VACATION): cv.string,
+                        vol.Optional(const.CONF_ALARM_PENDING): cv.string,
+                        vol.Optional(const.CONF_ALARM_ARMING): cv.string,
+                        #vol.Optional(const.CONF_ALARM_DISARMING): cv.string,
+                        vol.Optional(const.CONF_ALARM_TRIGGERED): cv.string
                     }),
                     vol.Required(CONF_COMMAND_TOPIC): cv.string,
                     vol.Optional(const.ATTR_COMMAND_PAYLOAD): vol.Schema({
@@ -175,11 +167,11 @@ class AlarmoAreaView(HomeAssistantView):
                 vol.Optional(ATTR_NAME): cv.string,
                 vol.Optional(const.ATTR_REMOVE): cv.boolean,
                 vol.Optional(const.ATTR_MODES): vol.Schema({
-                    vol.Optional(STATE_ALARM_ARMED_AWAY): mode_schema,
-                    vol.Optional(STATE_ALARM_ARMED_HOME): mode_schema,
-                    vol.Optional(STATE_ALARM_ARMED_NIGHT): mode_schema,
-                    vol.Optional(STATE_ALARM_ARMED_CUSTOM_BYPASS): mode_schema,
-                    vol.Optional(STATE_ALARM_ARMED_VACATION): mode_schema
+                    vol.Optional(const.CONF_ALARM_ARMED_AWAY): mode_schema,
+                    vol.Optional(const.CONF_ALARM_ARMED_HOME): mode_schema,
+                    vol.Optional(const.CONF_ALARM_ARMED_NIGHT): mode_schema,
+                    vol.Optional(const.CONF_ALARM_ARMED_CUSTOM_BYPASS): mode_schema,
+                    vol.Optional(const.CONF_ALARM_ARMED_VACATION): mode_schema
                 })
             }
         )

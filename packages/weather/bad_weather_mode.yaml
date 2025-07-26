@@ -14,11 +14,11 @@ automation:
     alias: "Bad Weather Mode On"
     trigger:
       # House becomes occupied
-      - platform: state
+      - trigger: state
         entity_id: input_boolean.house_occupied
         to: "on"
       # Bad weather
-      - platform: state
+      - trigger: state
         entity_id: sensor.pirateweather_summary
         to:
           - "exceptional"
@@ -27,13 +27,13 @@ automation:
           - "snowy"
           - "snowy rainy"
       # It's getting cloudy outside
-      - platform: numeric_state
+      - trigger: numeric_state
         entity_id: sensor.pirateweather_cloud_coverage
         above: 75
       # It's getting dark outside
-#      - platform: state
-#        entity_id: sensor.tempest_illuminance
-#        below: 50
+    #      - trigger: state
+    #        entity_id: sensor.tempest_illuminance
+    #        below: 50
     condition:
       # The house is occupied
       - condition: state
@@ -63,24 +63,24 @@ automation:
           - condition: numeric_state
             entity_id: sensor.pirateweather_alerts
             above: 1
-#          - condition: and
-#            conditions:
-#              - condition: or
-#                conditions:
-#                  # It's raining
-#                  - condition: numeric_state
-#                    entity_id: sensor.tempest_precipitation
-#                    above: ".01"
-#                  # Rain is becoming more intense
-#                  - condition: state
-#                    entity_id: sensor.tempest_precipitation_intensity
-#                    above: ".25"
-#              # AND it's kinda dark outside
-#              - condition: numeric_state
-#                entity_id: sensor.tempest_illuminance
-#                below: 150
+    #          - condition: and
+    #            conditions:
+    #              - condition: or
+    #                conditions:
+    #                  # It's raining
+    #                  - condition: numeric_state
+    #                    entity_id: sensor.tempest_precipitation
+    #                    above: ".01"
+    #                  # Rain is becoming more intense
+    #                  - condition: state
+    #                    entity_id: sensor.tempest_precipitation_intensity
+    #                    above: ".25"
+    #              # AND it's kinda dark outside
+    #              - condition: numeric_state
+    #                entity_id: sensor.tempest_illuminance
+    #                below: 150
     action:
-      - service: input_boolean.turn_on
+      - action: input_boolean.turn_on
         entity_id: input_boolean.bad_weather
 
   # Bad Weather Mode Off
@@ -93,18 +93,18 @@ automation:
     alias: "Bad Weather Mode Off"
     trigger:
       # House becomes occupied
-      - platform: state
+      - trigger: state
         entity_id: input_boolean.house_occupied
         to: "off"
-      - platform: state
+      - trigger: state
         entity_id: sensor.pirateweather_summary
         to: "sunny"
       # Not that cloudy
-      - platform: numeric_state
+      - trigger: numeric_state
         entity_id: sensor.pirateweather_cloud_coverage
         above: "41"
       # It's getting brighter outside
-      - platform: numeric_state
+      - trigger: numeric_state
         entity_id: sensor.tempest_illuminance
         above: 150
     condition:
@@ -136,5 +136,5 @@ automation:
             entity_id: sensor.pirateweather_cloud_coverage
             above: "41"
     action:
-      - service: input_boolean.turn_off
-        entity_id: input_boolean.bad_weather  
+      - action: input_boolean.turn_off
+        entity_id: input_boolean.bad_weather

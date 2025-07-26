@@ -12,18 +12,18 @@ input_boolean:
 automation:
   - id: "house_occupied"
     alias: "House occupied"
-    initial_state: "on"
+    initial_state: true
     trigger:
       # Triggered if John, Cristina, or Guest mode
       # get turned on
-      - platform: state
+      - trigger: state
         entity_id:
           - input_boolean.rick_home
         to: "on"
       # Hassio reloads/starts
-      - platform: event
+      - trigger: event
         event_type: automation_reloaded
-      - platform: homeassistant
+      - trigger: homeassistant
         event: start
     condition:
       # House is current unoccupied
@@ -37,7 +37,7 @@ automation:
             entity_id: input_boolean.rick_home
             state: "on"
     action:
-      - service: input_boolean.turn_on
+      - action: input_boolean.turn_on
         entity_id: input_boolean.house_occupied
 
 # Automation to detect if the house is not occupied
@@ -49,18 +49,18 @@ automation:
 #
   - id: "house_not_occupied"
     alias: "House not occupied"
-    initial_state: "on"
+    initial_state: true
     trigger:
       # If John, Cristina, or Guest mode turn off
       # then trigger the automation
-      - platform: state
-        entity_id:
-          - input_boolean.rick_home
+      - trigger: state
+        entity_id: 
+          input_boolean.rick_home
         to: "off"
       # Hassio reloads/starts
-      - platform: event
+      - trigger: event
         event_type: automation_reloaded
-      - platform: homeassistant
+      - trigger: homeassistant
         event: start
     condition:
       condition: and
@@ -70,5 +70,5 @@ automation:
           entity_id: input_boolean.rick_home
           state: "off"
     action:
-      - service: input_boolean.turn_off
+      - action: input_boolean.turn_off
         entity_id: input_boolean.house_occupied

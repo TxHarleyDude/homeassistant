@@ -6,7 +6,7 @@ input_boolean:
   recycling_day:
     name: Recycling Day
     icon: mdi:recycle
-    
+
 sensor:
   - platform: template
     sensors:
@@ -33,20 +33,20 @@ sensor:
           {% set event = state_attr('calendar.recycling', 'start_time') | as_datetime | as_local %}
           {% set delta = event - midnight %}
           {{ delta.days }}
-          
+
 automation:
   - id: garbage_day_event
     alias: Garbage Day Event
     mode: "single"
     trigger:
-      - platform: calendar
+      - trigger: calendar
         event: start
         entity_id: calendar.garbage
     action:
-      - service: input_boolean.turn_on
+      - action: input_boolean.turn_on
         entity_id: input_boolean.garbage_day
       # will keep this here for now
-      - service: persistent_notification.create
+      - action: persistent_notification.create
         data:
           notification_id: garbage-day-alert
           title: Garbage Notification
@@ -62,33 +62,33 @@ automation:
   - id: recycling_day_event
     alias: Recycling Day Event
     trigger:
-      - platform: calendar
+      - trigger: calendar
         event: start
         entity_id: calendar.recycling
     action:
-      - service: input_boolean.turn_on
+      - action: input_boolean.turn_on
         entity_id: input_boolean.recycling_day
 
   - id: reset_garbage_day
     alias: Reset Garbage Day
     trigger:
-      - platform: template
+      - trigger: template
         value_template: >-
           {{ 6 == states('sensor.days_till_garbage_pickup') | int }}
-#      - platform: event
-#        event_type: automation_reloaded
-#      - platform: homeassistant
-#        event: start
+    #      - trigger: event
+    #        event_type: automation_reloaded
+    #      - trigger: homeassistant
+    #        event: start
     condition:
-      - condition: state 
+      - condition: state
         entity_id: input_boolean.garbage_day
         state: "on"
-#      - condition: template 
-#        value_template: >-
-#          {{ 6 == states('sensor.days_till_garbage_pickup') | int }}
+    #      - condition: template
+    #        value_template: >-
+    #          {{ 6 == states('sensor.days_till_garbage_pickup') | int }}
 
     action:
-      - service: input_boolean.turn_off
-        entity_id: 
+      - action: input_boolean.turn_off
+        entity_id:
           - input_boolean.garbage_day
           - input_boolean.recycling_day

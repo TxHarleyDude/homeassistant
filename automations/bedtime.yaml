@@ -15,12 +15,12 @@
   id: "bedtime_tv_leds_on"
 
   trigger:
-    - platform: state
+    - trigger: state
       entity_id: input_boolean.bedtime
       to: "on"
 
   action:
-    - service: light.turn_on
+    - action: light.turn_on
       data:
         effect: "Alarmo - Pending"
       target:
@@ -32,12 +32,12 @@
 
 - alias: Bedtime - LED's Off after delay
   trigger:
-    - platform: state
+    - trigger: state
       entity_id: input_boolean.bedtime
       to: "on"
       for: "0:02:00"
   action:
-    - service: light.turn_off
+    - action: light.turn_off
       target:
         entity_id: light.living_room_tv_leds_tv_light
 
@@ -49,12 +49,12 @@
   id: "bedtime_alexa_message"
 
   trigger:
-    - platform: state
+    - trigger: state
       entity_id: input_boolean.bedtime
       to: "on"
 
   action:
-    - service: notify.alexa_media_rick_s_echo_dot
+    - action: notify.alexa_media_rick_s_echo_dot
       data:
         message: >-
           {{ [ 
@@ -73,7 +73,7 @@
   id: "bedtime_reset_switch"
 
   trigger:
-    - platform: state
+    - trigger: state
       entity_id: input_boolean.bedtime
       from: "off"
       to: "on"
@@ -83,5 +83,5 @@
         seconds: 0
 
   action:
-    - service: homeassistant.turn_off
+    - action: homeassistant.turn_off
       entity_id: input_boolean.bedtime

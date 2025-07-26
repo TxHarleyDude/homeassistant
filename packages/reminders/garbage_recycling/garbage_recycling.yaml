@@ -3,7 +3,7 @@ automation:
     alias: Garbage Day Notification
     mode: "single"
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: input_boolean.office_occupied
         to: "on"
     condition:
@@ -16,7 +16,7 @@ automation:
         entity_id: input_boolean.garbage_day
         state: "on"
     action:
-      - service: notify.alexa_media_rick_s_echo_dot
+      - action: notify.alexa_media_rick_s_echo_dot
         data:
           message: &update-message >-
             {% set message = "Today is garbage collection " %}
@@ -25,11 +25,10 @@ automation:
             {% endif %}
             {% set message = message + "day." %}
             {{ message }}
-      - service: script.general_notification
+      - action: script.general_notification
         data:
           message: *update-message
           title: Reminders
           devices: "rf"
           priority: "active"
           tag: "reminder"
-      

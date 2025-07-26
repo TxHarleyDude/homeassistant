@@ -1,0 +1,18 @@
+script:
+  office_dot_connect_bluetooth:
+    alias: Office Dot Connect Bluetooth
+    sequence:
+      - action: media_player.play_media
+        data:
+          entity_id: media_player.rick_s_echo_dot
+          media_content_id: connect bluetooth to LGS75QR1B
+          media_content_type: custom
+
+  office_dot_play_music:
+    alias: Office Dot Play Music
+    sequence:
+      - action: media_player.play_media
+        data:
+          entity_id: media_player.rick_s_echo_dot
+          media_content_id: play {{name_of_music}}
+          media_content_type: custom

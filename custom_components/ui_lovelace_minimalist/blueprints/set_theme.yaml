@@ -28,13 +28,13 @@ blueprint:
 mode: "single"
 
 trigger:
-  - platform: "homeassistant"
+  - trigger: "homeassistant"
     event: "start"
-  - platform: "event"
+  - trigger: "event"
     event_type: "automation_reload"
 
 action:
-  - service: "frontend.set_theme"
+  - action: "frontend.set_theme"
     data:
       name: !input "theme"
       mode: !input "mode"

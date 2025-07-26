@@ -1,20 +1,20 @@
 kodi_play_default_patio:
   sequence:
-    - service: kodi.call_method
+    - action: kodi.call_method
       data:
         method: Application.SetVolume
         volume: 50
       target:
         area_id: patio
         device_id: d1d87563b9bccbb2afaf97081e6da19b
-    - service: kodi.call_method
+    - action: kodi.call_method
       data:
         method: Playlist.Clear
         playlistid: 0
       target:
         area_id: patio
         device_id: d1d87563b9bccbb2afaf97081e6da19b
-    - service: kodi.call_method
+    - action: kodi.call_method
       data:
         method: Playlist.Add
         playlistid: 0
@@ -24,7 +24,7 @@ kodi_play_default_patio:
       target:
         area_id: patio
         device_id: d1d87563b9bccbb2afaf97081e6da19b
-    - service: kodi.call_method
+    - action: kodi.call_method
       data:
         method: Player.Open
         item:
@@ -33,7 +33,7 @@ kodi_play_default_patio:
       target:
         area_id: patio
         device_id: d1d87563b9bccbb2afaf97081e6da19b
-    - service: kodi.call_method
+    - action: kodi.call_method
       data:
         method: Input.ButtonEvent
         button: TAB

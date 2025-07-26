@@ -3,17 +3,17 @@
   id: notifications_updates_available
   mode: single
   trigger:
-    - platform: time_pattern
+    - trigger: time_pattern
       hours: /3
-    - platform: state
+    - trigger: state
       entity_id:
         - update.home_assistant_core_update
       to: "on"
-    - platform: state
+    - trigger: state
       entity_id:
         - update.home_assistant_operating_system_update
       to: "on"
-    - platform: state
+    - trigger: state
       entity_id:
         - update.hacs_update
       to: "on"
@@ -22,7 +22,7 @@
       after: "06:00:00"
       before: "20:00:00"
   action:
-    - service: notify.alert
+    - action: notify.alert
       data:
         title: Updates Available
         message: &update-message >-
@@ -54,7 +54,7 @@
           actions:
             - title: "Pause Alert"
               action: pause_alert_updates_available
-    - service: persistent_notification.create
+    - action: persistent_notification.create
       data:
         notification_id: update-alert
         title: Updates Available

@@ -14,7 +14,7 @@ automation:
   - id: "rick_leaves_home_zone"
     alias: "Rick Leaves Home Zone"
     trigger:
-    - platform: zone
+    - trigger: zone
       entity_id:
         - person.rick_fox
         - device_tracker.ricks_iphone
@@ -25,7 +25,7 @@ automation:
         entity_id: input_boolean.rick_left_zone
         state: "off"
     action:
-      - service: input_boolean.turn_on
+      - action: input_boolean.turn_on
         entity_id: input_boolean.rick_left_zone
 
   - id: 'rick_enters_home_zone'
@@ -33,38 +33,38 @@ automation:
     initial_state: 'on'
     trigger:
     # Rick enters the home zone
-    - platform: zone
+    - trigger: zone
       entity_id:
         - person.rick_fox
         - device_tracker.ricks_iphone
       zone: zone.home
       event: enter
     # HA reload or start
-    - platform: event
+    - trigger: event
       event_type: automation_reloaded
-    - platform: homeassistant
+    - trigger: homeassistant
       event: start
     condition: 
       - condition: state
         entity_id: input_boolean.rick_home
         state: "on"
     action:
-      - service: input_boolean.turn_off
+      - action: input_boolean.turn_off
         entity_id: input_boolean.rick_left_zone
         
   - id: 'person_rick_away'
     alias: 'Person Rick Away'
     initial_state: 'on'
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: input_boolean.rick_left_zone
         to: "on"
         for:
           minutes: 2
       # HA reload or start
-      - platform: event
+      - trigger: event
         event_type: automation_reloaded
-      - platform: homeassistant
+      - trigger: homeassistant
         event: start
     condition:
         - condition: state
@@ -82,9 +82,9 @@ automation:
               entity_id: device_tracker.ricks_iphone
               state: "not_home"
     action:
-      - service: input_boolean.turn_off
+      - action: input_boolean.turn_off
         entity_id: input_boolean.rick_home
-      - service: notify.pushover
+      - action: notify.pushover
         data:
           message: Rick is marked as away.
           title: Person Notification
@@ -94,16 +94,16 @@ automation:
     initial_state: 'on'
     trigger:
     # Rick enters the home zone
-    - platform: zone
+    - trigger: zone
       entity_id:
         - person.rick_fox
         - device_tracker.ricks_iphone
       zone: zone.home
       event: enter
     # HA reload or start
-    - platform: event
+    - trigger: event
       event_type: automation_reloaded
-    - platform: homeassistant
+    - trigger: homeassistant
       event: start
     condition: 
       - condition: state
@@ -120,11 +120,11 @@ automation:
             entity_id: device_tracker.ricks_iphone
             state: "home"
     action:
-      - service: input_boolean.turn_on
+      - action: input_boolean.turn_on
         entity_id: input_boolean.rick_home
-      - service: input_boolean.turn_off
+      - action: input_boolean.turn_off
         entity_id: input_boolean.rick_left_zone
-      - service: notify.pushover
+      - action: notify.pushover
         data:
           message: Rick is marked as home.
           title: Person Notification

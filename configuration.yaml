@@ -9,11 +9,20 @@ homeassistant:
   longitude: !secret longitude
   external_url: !secret external_url
   internal_url: !secret internal_url
+  
+  customize: !include customize.yaml
 
   packages: !include_dir_named "packages"
 
+http:
+  ssl_certificate: /ssl/fullchain.pem
+  ssl_key: /ssl/privkey.pem
+
+  # Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
 automation: !include automations.yaml
-automation manual: !include_dir_merge_list  automations/
+automation manual: !include_dir_merge_list automations/
 script: !include scripts.yaml
 script mine: !include_dir_merge_named scripts/
 
@@ -21,25 +30,27 @@ frontend:
   themes: !include_dir_merge_named themes/
 
   # Example configuration.yaml entry
-eufy:
-  username: !secret username
-  password: !secret password
+# eufy:
+#   username: !secret username
+#   password: !secret password
 
+wake_on_lan:
 
 sensor:
   - platform: mqtt_room
     name: "Tracy's iPhone - BLE"
-    device_id: !secret tracy_device_id 
+    device_id: !secret tracy_device_id
     state_topic: espresense/devices/tracy
     timeout: 5
     away_timeout: 120
 
-device_tracker:
-  - platform: iphonedetect
-    consider_home: 60
-    scan_interval: 12
-    new_device_defaults:
-      track_new_devices: true
-    hosts:
-      rick_iphone_detect: 192.168.1.50
-      tracy_iphone_detect: 192.168.1.51
+
+### Includes ###
+group: !include groups.yaml
+input_boolean: !include input_boolean.yaml
+#input_datetime: !include input_datetime.yaml
+input_number: !include input_number.yaml
+input_select: !include input_select.yaml
+input_text: !include input_text.yaml
+scene: !include scenes.yaml
+template: !include template.yaml

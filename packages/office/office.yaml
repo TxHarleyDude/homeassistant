@@ -1,15 +1,14 @@
 group:
   office_motion:
     name: Office Motion Sensors
-    entities:
-      binary_sensor.office_motion_occupancy
+    entities: binary_sensor.office_motion_occupancy
 
 timer:
   office_motion_timer:
     name: Office Motion Timer
     duration: 00:05:00
     restore: true
-    
+
 input_boolean:
   office_occupied:
     name: Office Occupied
@@ -27,40 +26,40 @@ template:
 
 automation:
   - alias: Office occupied
-    initial_state: 'on'
+    initial_state: "on"
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: group.office_motion
-        to: 'on'
-      - platform: state
+        to: "on"
+      - trigger: state
         entity_id: sensor.rick_office_session_state
-        to: 'Unlocked'
+        to: "Unlocked"
     condition:
       - condition: state
         entity_id: input_boolean.house_occupied
-        state: 'on'
+        state: "on"
     action:
-      - service: timer.start
-        target: 
+      - action: timer.start
+        target:
           entity_id: timer.office_motion_timer
-      - service: input_boolean.turn_on
+      - action: input_boolean.turn_on
         entity_id: input_boolean.office_occupied
 
   - alias: Office unoccupied
     id: office_unoccupied
-    initial_state: 'on'
+    initial_state: "on"
     trigger:
-      - platform: event
+      - trigger: event
         event_type: timer.finished
         event_data:
           entity_id: timer.office_motion_timer
     condition:
       - condition: state
         entity_id: input_boolean.office_occupied
-        state: 'on'
+        state: "on"
       - condition: state
         entity_id: group.office_motion
-        state: 'off'
+        state: "off"
     action:
       # Idea for this came from https://github.com/skalavala/mysmarthome/tree/master
       - service_template: >

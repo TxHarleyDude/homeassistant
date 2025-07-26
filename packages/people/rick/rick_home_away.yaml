@@ -4,67 +4,67 @@ input_boolean:
     icon: mdi:home
 
 automation:
-  - id: 'person_rick_away'
-    alias: 'Person Rick Away'
-    initial_state: 'on'
+  - id: "person_rick_away"
+    alias: "Person Rick Away"
+    initial_state: "on"
     trigger:
-      - platform: zone
+      - trigger: zone
         entity_id:
           - person.rick_fox
           - device_tracker.ricks_iphone
         zone: zone.home
         event: leave
-      - platform: state
+      - trigger: state
         entity_id:
           - person.rick_fox
           - device_tracker.ricks_iphone
         to: "not_home"
       # HA reload or start
-      - platform: event
+      - trigger: event
         event_type: automation_reloaded
-      - platform: homeassistant
+      - trigger: homeassistant
         event: start
     condition:
-        - condition: state
-          entity_id: input_boolean.rick_home
-          state: "on"
-          # At least one sensor reports not_home
-        - condition: or
-          conditions:
-            # Person is not_home
-            - condition: state
-              entity_id: person.rick_fox
-              state: "not_home"
-            # Companion app is not home
-            - condition: state
-              entity_id: device_tracker.ricks_iphone
-              state: "not_home"
+      - condition: state
+        entity_id: input_boolean.rick_home
+        state: "on"
+        # At least one sensor reports not_home
+      - condition: or
+        conditions:
+          # Person is not_home
+          - condition: state
+            entity_id: person.rick_fox
+            state: "not_home"
+          # Companion app is not home
+          - condition: state
+            entity_id: device_tracker.ricks_iphone
+            state: "not_home"
     action:
-      - service: script.turn_on
+      - action: script.turn_on
         entity_id: script.rick_away
 
-  - id: 'person_rick_home'
-    alias: 'Person Rick Home'
-    initial_state: 'on'
+  - id: "person_rick_home"
+    alias: "Person Rick Home"
+    initial_state: "on"
     trigger:
       # Rick enters the home zone
-      - platform: zone
+      - trigger: zone
         entity_id:
           - person.rick_fox
           - device_tracker.ricks_iphone
         zone: zone.home
         event: enter
-      - platform: state
+      - trigger: state
         entity_id:
           - person.rick_fox
           - device_tracker.ricks_iphone
         to: "home"
       # HA reload or start
-      - platform: event
+      - trigger: event
         event_type: automation_reloaded
-      - platform: homeassistant
+      - trigger: homeassistant
         event: start
-    condition: 
+    condition:
       - condition: state
         entity_id: input_boolean.rick_home
         state: "off"
@@ -79,32 +79,36 @@ automation:
             entity_id: device_tracker.ricks_iphone
             state: "home"
     action:
-      - service: script.turn_on
+      - action: script.turn_on
         entity_id: script.rick_home
 
 script:
   rick_home:
     alias: Rick Home
     sequence:
-
       # Change the input boolean to on
-      - service: input_boolean.turn_on
+      - action: input_boolean.turn_on
         entity_id: input_boolean.rick_home
 
-      - service: notify.pushover
+      - action: script.general_notification
         data:
-          message: Rick is marked as home.
-          title: Person Notification
+          title: "Person Notification"
+          message: "Rick is marked as home."
+          devices: "all"
+          priority: "time-sensitive"
+          tag: "person_notification_rick"
 
   rick_away:
     alias: Rick Away
     sequence:
-
       # Change the input boolean to on
-      - service: input_boolean.turn_off
+      - action: input_boolean.turn_off
         entity_id: input_boolean.rick_home
 
-      - service: notify.pushover
+      - action: script.general_notification
         data:
-          message: Rick is marked as away.
-          title: Person Notification
+          title: "Person Notification"
+          message: "Rick is marked as away."
+          devices: "all"
+          priority: "time-sensitive"
+          tag: "person_notification_rick"

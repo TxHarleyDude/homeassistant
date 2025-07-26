@@ -45,7 +45,7 @@ automation:
   - alias: Notify Holiday State Change
     initial_state: true
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: sensor.holiday
     condition:
       - condition: template
@@ -55,11 +55,11 @@ automation:
       - condition: template
         value_template: "{{ states('sensor.holiday') | trim != '' }}"
     action:
-      - service: persistent_notification.create
+      - action: persistent_notification.create
         data:
           message: "Today is {{ states('sensor.holiday') }}."
           title: "{{ states('sensor.holiday') }}"
-#      - service: script.notify_family
+#      - action: script.notify_family
 #        data:
 #          message: "Today is: {{states('sensor.holiday') }}"
 #          notify_options:

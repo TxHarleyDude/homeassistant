@@ -2,16 +2,16 @@
   id: "led_notifications_change_to"
 
   trigger:
-    - platform: state
+    - trigger: state
       entity_id: input_text.led_notification_change_to
 
   action:
-    - service: input_text.set_value
+    - action: input_text.set_value
       target:
         entity_id: input_text.led_notification_previous
       data:
         value: "{{ states('input_text.led_notification_current') }}"
-    - service: input_text.set_value
+    - action: input_text.set_value
       target:
         entity_id: input_text.led_notification_current
       data:

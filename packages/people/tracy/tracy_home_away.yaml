@@ -4,67 +4,67 @@ input_boolean:
     icon: mdi:home
 
 automation:
-  - id: 'person_tracy_away'
-    alias: 'Person Tracy Away'
-    initial_state: 'on'
+  - id: "person_tracy_away"
+    alias: "Person Tracy Away"
+    initial_state: "on"
     trigger:
-      - platform: zone
+      - trigger: zone
         entity_id:
           - person.tracy_fox
           - device_tracker.tracys_iphone
         zone: zone.home
         event: leave
-      - platform: state
+      - trigger: state
         entity_id:
           - person.tracy_fox
           - device_tracker.tracys_iphone
         to: "not_home"
       # HA reload or start
-      - platform: event
+      - trigger: event
         event_type: automation_reloaded
-      - platform: homeassistant
+      - trigger: homeassistant
         event: start
     condition:
-        - condition: state
-          entity_id: input_boolean.tracy_home
-          state: "on"
-          # At least one sensor reports not_home
-        - condition: or
-          conditions:
-            # Person is not_home
-            - condition: state
-              entity_id: person.tracy_fox
-              state: "not_home"
-            # Companion app is not home
-            - condition: state
-              entity_id: device_tracker.tracys_iphone
-              state: "not_home"
+      - condition: state
+        entity_id: input_boolean.tracy_home
+        state: "on"
+        # At least one sensor reports not_home
+      - condition: or
+        conditions:
+          # Person is not_home
+          - condition: state
+            entity_id: person.tracy_fox
+            state: "not_home"
+          # Companion app is not home
+          - condition: state
+            entity_id: device_tracker.tracys_iphone
+            state: "not_home"
     action:
-      - service: script.turn_on
+      - action: script.turn_on
         entity_id: script.tracy_away
 
-  - id: 'person_tracy_home'
-    alias: 'Person Tracy Home'
-    initial_state: 'on'
+  - id: "person_tracy_home"
+    alias: "Person Tracy Home"
+    initial_state: "on"
     trigger:
       # tracy enters the home zone
-      - platform: zone
+      - trigger: zone
         entity_id:
           - person.tracy_fox
           - device_tracker.tracys_iphone
         zone: zone.home
         event: enter
-      - platform: state
+      - trigger: state
         entity_id:
           - person.tracy_fox
           - device_tracker.tracys_iphone
         to: "home"
       # HA reload or start
-      - platform: event
+      - trigger: event
         event_type: automation_reloaded
-      - platform: homeassistant
+      - trigger: homeassistant
         event: start
-    condition: 
+    condition:
       - condition: state
         entity_id: input_boolean.tracy_home
         state: "off"
@@ -79,32 +79,34 @@ automation:
             entity_id: device_tracker.tracys_iphone
             state: "home"
     action:
-      - service: script.turn_on
+      - action: script.turn_on
         entity_id: script.tracy_home
 
 script:
   tracy_home:
     alias: Tracy Home
     sequence:
-
       # Change the input boolean to on
-      - service: input_boolean.turn_on
+      - action: input_boolean.turn_on
         entity_id: input_boolean.tracy_home
-
-      - service: notify.pushover
+      - action: script.general_notification
         data:
-          message: Tracy is marked as home.
-          title: Person Notification
+          title: "Person Notification"
+          message: "Tracy is marked as home."
+          devices: "all"
+          priority: "time-sensitive"
+          tag: "person_notification_tracy"
 
   tracy_away:
     alias: Tracy Away
     sequence:
-
       # Change the input boolean to on
-      - service: input_boolean.turn_off
+      - action: input_boolean.turn_off
         entity_id: input_boolean.tracy_home
-
-      - service: notify.pushover
+      - action: script.general_notification
         data:
-          message: Tracy is marked as away.
-          title: Person Notification
+          title: "Person Notification"
+          message: "Tracy is marked as away."
+          devices: "all"
+          priority: "time-sensitive"
+          tag: "person_notification_tracy"

@@ -11,4 +11,3 @@ sensor:
           {% set event = state_attr('calendar.hvac_filter', 'start_time') | as_datetime | as_local %}
           {% set delta = event - midnight %}
           {{ delta.days }}
-

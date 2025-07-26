@@ -146,7 +146,7 @@ variables:
     {% endfor %}
     {{ns.sensors}}"
 trigger:
-  - platform: time
+  - trigger: time
     at: !input time
 condition:
   condition: and

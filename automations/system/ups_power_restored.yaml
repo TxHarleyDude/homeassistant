@@ -8,14 +8,14 @@
 
   trigger:
     entity_id: sensor.ups_status
-    platform: state
+    trigger: state
     from: On Battery Battery Discharging
     to: Online Battery Charging
 
   condition: []
 
   action:
-    - service: notify.alert
+    - action: notify.alert
       data:
         title: Power Restored
         message: HA UPS Status - Online Battery Charging
@@ -33,6 +33,6 @@
           actions:
             - title: "Pause Alert"
               action: pause_alert_updates_available
-    - service: input_boolean.turn_off
+    - action: input_boolean.turn_off
       data: {}
       entity_id: input_boolean.ups_on_batteries

@@ -1,0 +1,54 @@
+# MariaDB Config
+recorder:
+  db_url: !secret mariadburl
+  purge_keep_days: 10
+
+  exclude:
+    domains:
+      - automation
+      - weblink
+      - updater
+      - script
+
+    entities:
+      - sensor.date
+      - sensor.time
+
+logbook:
+  include:
+    domains:
+      - media_player
+      - automation
+      - script
+      - scene
+      - light
+      - switch
+      - device_tracker
+      - input_boolean
+      - person
+      - event
+      - timer
+      - service
+      - binary_sensor
+      - sensor
+
+  exclude:
+    entities:
+      - sensor.date
+      - sensor.time
+      - sensor.er605_up_time
+
+# Lets try to make the logs less chatty and more fine tuned.       
+logger:
+  default: error
+  
+history:
+  include:
+    domains:
+      - binary_sensor
+      - sensor
+      - switch
+      - media_player
+      - light
+      - scene
+      - automation

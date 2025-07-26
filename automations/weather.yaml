@@ -1,9 +1,9 @@
 - alias: "Cold Weather Alerts"
   trigger:
-    - platform: time
+    - trigger: time
       at: "07:00:00"
   action:
-    - service: notify.pushover
+    - action: notify.pushover
       data:
         message: >-
           {% set dates = state_attr('weather.home', 'forecast') %}

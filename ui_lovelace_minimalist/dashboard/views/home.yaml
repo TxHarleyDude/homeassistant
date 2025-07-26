@@ -10,7 +10,7 @@ cards:
       entity_1:
         nav: "house"
         icon: "mdi:home"
-        name: "House"
+        name: "Home"
         color: "blue"
       entity_2:
         nav: "lights"
@@ -47,10 +47,6 @@ cards:
         variables:
           ulm_card_person_entity: person.tracy_fox
           ulm_card_person_use_entity_picture: true
-
-  - type: "custom:button-card"
-    template: card_title
-    name: Rooms
 
   - type: "horizontal-stack"
     cards:
@@ -90,3 +86,37 @@ cards:
           [[[
             return "🌡️ " + states['sensor.living_room_temperature'].state + " °C" + " 💧 " + states['sensor.living_room_humidity'].state + " %"
           ]]]
+
+  - type: "custom:button-card"
+    template:
+      - card_room
+      - red_no_state
+    name: Office
+    entity: sensor.office_motion_device_temperature
+    icon: mdi:desk
+    tap_action:
+      action: navigate
+      navigation_path: '/ui-lovelace-minimalist/bathroom'
+    variables:
+      label_use_temperature: true
+      label_use_brightness: true
+      entity_1:
+        entity_id: binary_sensor.office_motion_occupancy
+        templates:
+          - yellow_on
+        tap_action:
+          action: toggle
+      entity_2:
+        entity_id: binary_sensor.office_chair_contact
+        templates:
+          - blue_on
+        tap_action:
+          action: none
+      entity_3:
+        entity_id: input_boolean.office_occupied
+        templates:
+          - green_on
+          - red_off
+        tap_action:
+          action: toggle
+    rooms:

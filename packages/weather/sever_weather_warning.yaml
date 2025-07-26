@@ -3,9 +3,9 @@ automation:
     alias: Severe Weather Warning
     initial_state: on
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: sensor.pirateweather_alerts
-      # - platform: webhook
+      # - trigger: webhook
       #   webhook_id: "tomorrow_io_sw_alert"
       #   allowed_methods:
       #     - POST
@@ -25,14 +25,14 @@ automation:
 
     action:
       # Announce to the house
-#      - service: script.voice_announcement
-#        data:
-#          speech_message: "{{ state_attr('sensor.pirateweather_alerts', 'title') }}"
-#          sound: "default"
-#          media_players: auto
+      #      - action: script.voice_announcement
+      #        data:
+      #          speech_message: "{{ state_attr('sensor.pirateweather_alerts', 'title') }}"
+      #          sound: "default"
+      #          media_players: auto
 
       # Notification for logging
-      - service: script.general_notification
+      - action: script.general_notification
         data:
           title: "Weather Alert: {{ state_attr('sensor.pirateweather_alerts', 'title') }}"
           message: >

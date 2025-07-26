@@ -1,0 +1,14 @@
+mqtt:
+  sensor:
+    - name: "Battery Box Voltage"
+      state_topic: "solar/batterybox/state"
+      value_template: "{{ value_json['battV'] }}"
+      device_class: voltage
+      unit_of_measurement: V
+      icon: mdi:waves-arrow-right
+
+    - name: "Battery Box SOC"
+      state_topic: "solar/batterybox/state"
+      value_template: "{{ value_json['battCap'] }}"
+      device_class: battery 
+      unit_of_measurement: "%"
