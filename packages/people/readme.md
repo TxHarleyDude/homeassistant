@@ -47,3 +47,52 @@ Each household member has their own `input_boolean` to track arrival intent:
 
 A central boolean (`input_boolean.a_person_arriving`) is set to **True** if any individual arrival flag is True:
 
+
+This shared flag is used to determine if someone is truly arriving home for shared automations.
+
+---
+
+## State Logic Overview
+
+| Large Zone (Near Home) | Small Zone (Home) | Resulting State | Notes |
+|------------------------|------------------|----------------|-------|
+| ❌ Outside             | ❌ Outside       | AWAY           | Person is fully away |
+| ✔ Inside               | ❌ Outside       | NEAR HOME      | Approaching home, arrival boolean may be True |
+| ✔ Inside               | ✔ Inside        | HOME           | Arrival confirmed if arrival boolean is True |
+| ❌ Outside             | ✔ Inside        | IGNORED        | Drive-through scenario; prevents false triggers |
+
+---
+
+## Workflow
+
+### Leaving Home
+1. Exit Home zone → may still be considered near home (arrival flag remains True if approaching).  
+2. Exit Near Home zone → confirmed AWAY; reset individual arrival flag.
+
+### Returning Home
+1. Enter Near Home zone → set arrival flag = True.  
+2. Enter Home zone → if arrival flag = True, confirm arrival and trigger automations.  
+3. Reset arrival flag to False after arrival.
+
+---
+
+## Benefits
+
+- Prevents false arrivals caused by GPS drift or brief pass-by events  
+- Supports multiple household members independently  
+- Centralized shared arrival detection for automations  
+- Scalable for additional people or zones  
+
+---
+
+## Optional Enhancements
+
+- Add a short delay (30–60s) before marking “arrived” to smooth GPS fluctuations  
+- Integrate presence with media devices, night mode, or “last person home” logic  
+- Visualize zones with a simple map or diagram for easier understanding  
+
+---
+
+## Notes
+
+This system has been beta-tested to reliably track presence and arrivals. Future testing will refine thresholds, delays, and edge case handling.
